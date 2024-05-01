@@ -1,0 +1,22 @@
+server:
+  address: localhost
+  port: 8080
+
+spring:
+  profiles:
+    active: db
+  datasource:
+    driver-class-name: ${driver-class-name}
+    url : ${url}
+    username: ${username}
+    password: ${password}
+
+  jpa:
+    hibernate:
+      ddl-auto: create
+    properties:
+      hibernate:
+        show_sql: true
+        format_sql: true
+    database: mysql
+    show-sql: true
