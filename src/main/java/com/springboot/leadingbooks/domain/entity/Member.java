@@ -1,5 +1,6 @@
 package com.springboot.leadingbooks.domain.entity;
 
+import com.springboot.leadingbooks.domain.enum_.Role;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -12,16 +13,20 @@ public class Member extends BaseTimeEntity {
     @Id
     @GeneratedValue
     @Column(name = "m_no")
-    private Long mNo;
+    private Long id;
 
     @Embedded
     private Login loginData;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "m_role")
-    private String mRole;
+    private Role mRole;
 
     @Column(name = "m_banned")
     private boolean mBanned;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "c_no")
+    private CheckOut checkOut;
 
 }
