@@ -7,6 +7,9 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
@@ -32,9 +35,11 @@ public class Book extends BaseTimeEntity {
     @Column(name = "b_count", nullable = false)
     private Long bCount;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "c_no")
-    private CheckOut checkOut;
+    @OneToMany(mappedBy = "book", cascade = CascadeType.ALL)
+    private List<CheckOut> checkOutList = new ArrayList<>();
+
+    @OneToMany(mappedBy = "book", cascade = CascadeType.ALL)
+    private List<Review> reviewList = new ArrayList<>();
 
     @Builder
     public Book(String bName, String bWriter, String bPublish, Category bCategory, Long bCount) {

@@ -1,26 +1,26 @@
 package com.springboot.leadingbooks.domain.entity;
 
 import jakarta.persistence.*;
-import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.ColumnDefault;
+
 import java.util.ArrayList;
 import java.util.List;
 
-
 @Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor
 @Entity
-public class CheckOut {
+public class Review extends BaseTimeEntity {
     @Id
     @GeneratedValue
-    @Column(name = "c_no")
+    @Column(name = "r_no")
     private Long id;
 
-    @Column(name = "c_date")
-    @ColumnDefault("14")
-    private int cDate;
+    @Column(name = "r_rating")
+    private int rRating;
+
+    @Column(name = "r_content")
+    private String rContent;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "b_no")

@@ -6,6 +6,9 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
@@ -25,8 +28,10 @@ public class Member extends BaseTimeEntity {
     @Column(name = "m_banned")
     private boolean mBanned;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "c_no")
-    private CheckOut checkOut;
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
+    private List<CheckOut> checkOutList = new ArrayList<>();
+
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
+    private List<Review> reviewList = new ArrayList<>();
 
 }
