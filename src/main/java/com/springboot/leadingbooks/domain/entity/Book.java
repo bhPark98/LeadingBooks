@@ -7,6 +7,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -42,11 +43,11 @@ public class Book extends BaseTimeEntity {
     private List<Review> reviewList = new ArrayList<>();
 
     @Builder
-    public Book(String bName, String bWriter, String bPublish, Category bCategory, Long bCount) {
+    public Book(String bName, String bWriter, String bPublish, Category bCategory) {
         this.bName = bName;
         this.bWriter = bWriter;
         this.bPublish = bPublish;
         this.bCategory = bCategory;
-        this.bCount = bCount;
+        this.bCount++;
     }
 }
