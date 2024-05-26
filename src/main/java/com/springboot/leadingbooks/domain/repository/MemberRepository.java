@@ -38,5 +38,11 @@ public class MemberRepository {
                 .getResultStream().findAny();
     }
 
+    public Optional<Member> findByName(String mName) {
+        return em.createQuery("select m from Member m where m.loginData.mName =:mName", Member.class)
+                .setParameter("mName", mName)
+                .getResultStream()
+                .findFirst();
 
+    }
 }

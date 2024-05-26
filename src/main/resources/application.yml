@@ -20,3 +20,6 @@ spring:
         format_sql: true
     database: mysql
     show-sql: true
+
+  jwt:
+    secret: 4dc8a15a83350e03f1dbc83fbb71134b0c0889c22c756e7b55e8ed60327dfa85
