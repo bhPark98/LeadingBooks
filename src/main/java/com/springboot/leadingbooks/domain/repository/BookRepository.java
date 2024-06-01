@@ -1,6 +1,7 @@
 package com.springboot.leadingbooks.domain.repository;
 
 import com.springboot.leadingbooks.domain.entity.Book;
+import com.springboot.leadingbooks.domain.enum_.Category;
 import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
@@ -23,15 +24,21 @@ public class BookRepository {
         em.remove(book);
     }
 
-    public Optional<Integer> findBookByName(String bName) { // 책 제목으로 찾기(책이 몇권 있는지)
-        return em.createQuery("select b.bCount from Book b where b.bName = :bName", Integer.class)
+    public Optional<Book> findBookByName(String bName) { // 책 제목으로 찾기(책이 몇권 있는지)
+        return em.createQuery("select b from Book b where b.bName = :bName", Book.class)
                 .setParameter("bName", bName)
                 .getResultStream().findAny();
     }
 
-    public Optional<Integer> findBookByWriter(String bWriter) { // 책 작가로 찾기(책이 몇권 있는지)
-        return em.createQuery("select b.bCount from Book b where b.bWriter =:bWriter", Integer.class)
+    public Optional<Book> findBookByWriter(String bWriter) { // 책 작가로 찾기(책이 몇권 있는지)
+        return em.createQuery("select b from Book b where b.bWriter =:bWriter", Book.class)
                 .setParameter("bWriter", bWriter)
+                .getResultStream().findAny();
+    }
+
+    public Optional<Book> findBookByCategory(Category category) {   // 책 카테고리로 찾기
+        return em.createQuery("select b from Book b where b.bCategory =:bCategory", Book.class)
+                .setParameter("bCategory", category)
                 .getResultStream().findAny();
     }
 

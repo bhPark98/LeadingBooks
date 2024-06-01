@@ -1,4 +1,4 @@
-package com.springboot.leadingbooks.config;
+package com.springboot.leadingbooks.global.config;
 
 import com.springboot.leadingbooks.util.token.JwtAuthenticationFilter;
 import com.springboot.leadingbooks.util.token.JwtTokenProvider;
