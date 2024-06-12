@@ -5,6 +5,8 @@ import com.springboot.leadingbooks.domain.enum_.Category;
 import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
+
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -24,6 +26,12 @@ public class BookRepository {
         em.remove(book);
     }
 
+    public Optional<Book> findBookById(Long bId) {
+        return em.createQuery("select b from Book b where b.id = :id", Book.class)
+                .setParameter("id", bId)
+                .getResultStream().findAny();
+    }
+
     public Optional<Book> findBookByName(String bName) { // 책 제목으로 찾기(책이 몇권 있는지)
         return em.createQuery("select b from Book b where b.bName = :bName", Book.class)
                 .setParameter("bName", bName)
@@ -36,11 +44,14 @@ public class BookRepository {
                 .getResultStream().findAny();
     }
 
-    public Optional<Book> findBookByCategory(Category category) {   // 책 카테고리로 찾기
+    public List<Book> findBookByCategory(Category category) {   // 책 카테고리로 찾기
         return em.createQuery("select b from Book b where b.bCategory =:bCategory", Book.class)
-                .setParameter("bCategory", category)
-                .getResultStream().findAny();
+                .getResultList();
     }
 
+    public List<Book> findAllBooks() {  // 전체 도서 조회
+        return em.createQuery("select b from Book b", Book.class)
+                .getResultList();
+    }
 
 }

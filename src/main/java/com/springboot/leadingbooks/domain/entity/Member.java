@@ -34,4 +34,24 @@ public class Member extends BaseTimeEntity {
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
     private List<Review> reviewList = new ArrayList<>();
 
+    @OneToOne(mappedBy = "member", cascade = CascadeType.ALL)
+    private Stopped stopped;
+
+    public void changeBanned() {
+        if(this.mBanned) {
+            this.mBanned = false;
+        }
+        else {
+            this.mBanned = true;
+        }
+    }
+
+    public void changeRole(Role mRole) {
+        if(this.mRole == Role.ADMIN) {
+            this.mRole = Role.USER;
+        }else {
+            this.mRole = Role.ADMIN;
+        }
+    }
+
 }

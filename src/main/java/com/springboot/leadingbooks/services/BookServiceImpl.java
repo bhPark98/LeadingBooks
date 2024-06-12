@@ -13,6 +13,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 @Transactional
@@ -50,12 +52,9 @@ public class BookServiceImpl implements BookService {
 
         return FindBookResponseDto.of(book);
     }
-    // 책 카테고리로 검색하기
-    public FindBookResponseDto FindBookByCategory(Category category) {
-        Book book = bookRepository.findBookByCategory(category).orElseThrow(
-                () -> new CustomException(ErrorCode.NOT_FOUND_CATEGORY)
-        );
+    // 책 카테고리로 책 리스트 조회하기
+    public List<Book> FindBookByCategory(Category category) {
 
-        return FindBookResponseDto.of(book);
+        return bookRepository.findBookByCategory(category);
     }
 }

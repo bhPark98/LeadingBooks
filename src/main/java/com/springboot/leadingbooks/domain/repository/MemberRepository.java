@@ -5,6 +5,7 @@ import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -24,6 +25,11 @@ public class MemberRepository {
         em.remove(member);
     }
 
+    public List<Member> findAllMembers() {
+        return em.createQuery("select m from Member m")
+                .getResultList();
+
+    }
     public Optional<String> findIdByEmail(String mName, String mEmail) {    // 이메일과 이름으로 아이디찾기
         return em.createQuery("select m.loginData.mId from Member m where m.loginData.mName =:mName and m.loginData.mEmail =:mEmail", String.class)
                 .setParameter("mName", mName)
@@ -44,5 +50,12 @@ public class MemberRepository {
                 .getResultStream()
                 .findFirst();
 
+    }
+
+    public Optional<Member> findById(Long mId) {
+        return em.createQuery("select m from Member m where m.loginData.mId =:mId", Member.class)
+                .setParameter("mId", mId)
+                .getResultStream()
+                .findFirst();
     }
 }
