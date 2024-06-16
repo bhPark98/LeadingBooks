@@ -50,4 +50,8 @@ public class Book extends BaseTimeEntity {
         this.bCategory = bCategory;
         this.bCount++;
     }
+
+    public void decreaseBookCount() {
+        this.bCount--;
+    }
 }

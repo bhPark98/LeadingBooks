@@ -1,15 +1,15 @@
 package com.springboot.leadingbooks.domain.entity;
 
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
 import java.util.ArrayList;
 import java.util.List;
 
 
 @Getter
+@Builder
+@AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 public class CheckOut {
@@ -19,7 +19,7 @@ public class CheckOut {
     private Long id;
 
     @Column(name = "c_date")
-    @ColumnDefault("14")
+    @ColumnDefault("7")
     private int cDate;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -30,4 +30,7 @@ public class CheckOut {
     @JoinColumn(name = "m_no")
     private Member member;
 
+    public void setcDate(int cDate) {
+        this.cDate = cDate;
+    }
 }

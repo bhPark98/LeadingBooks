@@ -5,6 +5,8 @@ import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
 @RequiredArgsConstructor
 public class CheckOutRepository {
@@ -22,5 +24,8 @@ public class CheckOutRepository {
         em.remove(checkOut);
     }
 
-
+    public List<CheckOut> findAll() {
+        return em.createQuery("select c from CheckOut c")
+                .getResultList();
+    }
 }
