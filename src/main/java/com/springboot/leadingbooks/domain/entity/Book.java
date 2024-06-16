@@ -43,11 +43,12 @@ public class Book extends BaseTimeEntity {
     private List<Review> reviewList = new ArrayList<>();
 
     @Builder
-    public Book(String bName, String bWriter, String bPublish, Category bCategory) {
+    public Book(String bName, String bWriter, String bPublish, Category bCategory, List<Review> review) {
         this.bName = bName;
         this.bWriter = bWriter;
         this.bPublish = bPublish;
         this.bCategory = bCategory;
+        this.reviewList = review;
         this.bCount++;
     }
 

@@ -20,13 +20,14 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
-public class CheckOutServiceImpl {
+public class CheckOutServiceImpl implements CheckOutService {
     private final BookRepository bookRepository;
     private final CheckOutRepository checkOutRepository;
     private final MemberRepository memberRepository;
     private final MemberManagementService memberManagementService;
 
     // 도서 대여 로직
+    @Override
     @Transactional
     public void CheckOutBooks(Long bId, Long mId) {
         Book book = bookRepository.findBookById(bId).orElseThrow(
@@ -49,6 +50,7 @@ public class CheckOutServiceImpl {
             throw new CustomException(ErrorCode.NOT_COUNT_BOOK);
     }
     // 대출 기한 로직
+    @Override
     @Scheduled(cron = "0 0 0 * * ?")
     @Transactional
     public void updateCheckOutDates() {
@@ -65,6 +67,7 @@ public class CheckOutServiceImpl {
     }
 
     // 도서 대여 기간 연장
+    @Override
     public void extendDates(Long mId, List<Long> bIds) {
         Member member = memberRepository.findById(mId).orElseThrow(
                 () -> new CustomException(ErrorCode.NOT_FOUND_MEMBER)

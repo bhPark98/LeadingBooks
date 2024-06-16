@@ -1,6 +1,7 @@
 package com.springboot.leadingbooks.domain.entity;
 
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -29,5 +30,13 @@ public class Review extends BaseTimeEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "m_no")
     private Member member;
+
+    @Builder
+    public Review(int rRating, String rContent, Member member, Book book) {
+        this.rRating = rRating;
+        this.rContent = rContent;
+        this.member = member;
+        this.book = book;
+    }
 
 }
