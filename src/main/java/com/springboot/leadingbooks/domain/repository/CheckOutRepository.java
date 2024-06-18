@@ -28,4 +28,9 @@ public class CheckOutRepository {
         return em.createQuery("select c from CheckOut c")
                 .getResultList();
     }
+
+    public List<CheckOut> findByMemberId(Long mId) {
+        return em.createQuery("select c from CheckOut c where member.id =: mId", CheckOut.class)
+                .getResultList();
+    }
 }

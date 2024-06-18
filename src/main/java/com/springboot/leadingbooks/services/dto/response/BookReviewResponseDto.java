@@ -1,4 +1,4 @@
-    package com.springboot.leadingbooks.dto.response;
+    package com.springboot.leadingbooks.services.dto.response;
 
     import com.springboot.leadingbooks.domain.entity.Book;
     import com.springboot.leadingbooks.domain.entity.Review;
@@ -6,7 +6,6 @@
     import lombok.AllArgsConstructor;
     import lombok.Builder;
     import lombok.Data;
-    import lombok.Getter;
 
     import java.util.List;
 

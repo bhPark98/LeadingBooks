@@ -1,4 +1,4 @@
-package com.springboot.leadingbooks.dto.request;
+package com.springboot.leadingbooks.services.dto.request;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

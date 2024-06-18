@@ -12,7 +12,8 @@ public enum ErrorCode {
     NOT_FOUND_MEMBER(HttpStatus.NOT_FOUND, "NFM", "멤버정보를 찾을 수 없습니다."),
     NOT_FOUND_BOOK(HttpStatus.NOT_FOUND, "NFB", "해당 책을 찾을 수 없습니다."),
     NOT_FOUND_STOPPED(HttpStatus.NOT_FOUND, "NFS", "정지회원이 존재하지 않습니다."),
-    NOT_COUNT_BOOK(HttpStatus.NOT_FOUND, "NCB", "대여 가능한 도서가 존재하지 않습니다.");
+    NOT_COUNT_BOOK(HttpStatus.NOT_FOUND, "NCB", "대여 가능한 도서가 존재하지 않습니다."),
+    DUPLICATED_NICKNAME(HttpStatus.IM_USED, "DN", "중복된 닉네임입니다. 다른 닉네임을 입력하여주세요.");
 
     private final HttpStatus httpStatus;
     private final String code;

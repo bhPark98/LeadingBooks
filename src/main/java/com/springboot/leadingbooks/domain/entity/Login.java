@@ -38,4 +38,9 @@ public class Login {
         this.mPwd = mPwd;
         this.mPhone = mPhone;
     }
+
+    public void changeNickname(String mNickname) {
+        this.mNickname = mNickname;
+    }
+
 }

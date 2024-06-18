@@ -1,7 +1,7 @@
 package com.springboot.leadingbooks.services;
 
-import com.springboot.leadingbooks.dto.request.ReviewCreateRequestDto;
-import com.springboot.leadingbooks.dto.response.BookReviewResponseDto;
+import com.springboot.leadingbooks.services.dto.request.ReviewCreateRequestDto;
+import com.springboot.leadingbooks.services.dto.response.BookReviewResponseDto;
 
 public interface ReviewService {
     // 도서 조회 로직

@@ -58,4 +58,12 @@ public class MemberRepository {
                 .getResultStream()
                 .findFirst();
     }
+
+    public boolean isNotExistsNickname(String mNickname) {
+        long count = em.createQuery("select count(m) from Member m where m.loginData.mNickname = :mNickname", Long.class)
+                .setParameter("mNickname", mNickname)
+                .getSingleResult();
+
+        return count == 0;
+    }
 }

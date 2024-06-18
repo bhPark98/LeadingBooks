@@ -3,7 +3,7 @@ package com.springboot.leadingbooks.admin.service.bookservice;
 import com.springboot.leadingbooks.domain.entity.Book;
 import com.springboot.leadingbooks.domain.enum_.Category;
 import com.springboot.leadingbooks.domain.repository.BookRepository;
-import com.springboot.leadingbooks.dto.request.BookCreateRequestDto;
+import com.springboot.leadingbooks.services.dto.request.BookCreateRequestDto;
 import com.springboot.leadingbooks.global.response.error.CustomException;
 import com.springboot.leadingbooks.global.response.error.ErrorCode;
 import lombok.RequiredArgsConstructor;
