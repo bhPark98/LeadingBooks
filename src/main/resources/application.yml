@@ -5,6 +5,9 @@ server:
 spring:
   profiles:
     active: db
+  config:
+    import: application-db.yml
+
   datasource:
     driver-class-name: ${driver-class-name}
     url : ${url}
@@ -13,7 +16,7 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: create
+      ddl-auto: update
     properties:
       hibernate:
         show_sql: true
@@ -21,5 +24,5 @@ spring:
     database: mysql
     show-sql: true
 
-  jwt:
-    secret: 4dc8a15a83350e03f1dbc83fbb71134b0c0889c22c756e7b55e8ed60327dfa85
+jwt:
+  secret: 553e8326984a2698d7b4bcef7741d885e43bd188b47b2d35ad08d98ffb30537b

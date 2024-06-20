@@ -14,7 +14,7 @@ public class BookCreateResponseDto {
     private String bWriter;
     private String bPublish;
     private Category category;
-    private Long bCount;
+    private int bCount;
 
     public static BookCreateResponseDto of(Book book) {
         return BookCreateResponseDto.builder()

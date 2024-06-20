@@ -32,7 +32,7 @@ public class BookServiceImpl implements BookService {
     private final CheckOutRepository checkOutRepository;
 
     // 도서 등록 메서드
-    public BookCreateResponseDto RegisterBook(BookCreateRequestDto bookCreateRequestDto) {
+    public void RegisterBook(BookCreateRequestDto bookCreateRequestDto) {
         Book book = Book.builder()
                 .bName(bookCreateRequestDto.getBName())
                 .bWriter(bookCreateRequestDto.getBWriter())
@@ -40,9 +40,8 @@ public class BookServiceImpl implements BookService {
                 .bCategory(bookCreateRequestDto.getCategory())
                 .build();
 
+        book.increaseBookCount();
         bookRepository.save(book);
-
-        return BookCreateResponseDto.of(book);
 
     }
     // 책 제목으로 검색하기
@@ -68,8 +67,8 @@ public class BookServiceImpl implements BookService {
     }
 
     // 책 전체 조회
-    public List<Book> getAllBooks() {
-        return bookRepository.findAllBooks();
+    public List<Book> getAllBooks(int pageNumber, int pageSize) {
+        return bookRepository.findAllBooks(pageNumber, pageSize);
     }
 
 

@@ -26,7 +26,7 @@ public class CustomUserDetailsService implements UserDetailsService {
                 .map(this::createUserDetails)
                 .orElseThrow(() -> new UsernameNotFoundException("해당하는 회원을 찾을 수 없습니다."));
     }
-
+    // 해당되는 User의 데이터가 존재한다면 UserDetails 객체로 만들어서 return
     private UserDetails createUserDetails(Member member) {
         return User.builder()
                 .username(member.getLoginData().getMName())

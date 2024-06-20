@@ -49,8 +49,10 @@ public class BookRepository {
                 .getResultList();
     }
 
-    public List<Book> findAllBooks() {  // 전체 도서 조회
+    public List<Book> findAllBooks(int pageNumber, int pageSize) {  // 전체 도서 조회
         return em.createQuery("select b from Book b", Book.class)
+                .setFirstResult(pageNumber * pageSize)
+                .setMaxResults(pageSize)
                 .getResultList();
     }
 

@@ -17,8 +17,8 @@ public class BookManagementService {
     private final BookRepository bookRepository;
 
     // 전체 책 조회
-    public List<Book> findAllBooks() {
-        return bookRepository.findAllBooks();
+    public List<Book> findAllBooks(int pageNumber, int pageSize) {
+        return bookRepository.findAllBooks(pageNumber, pageSize);
     }
     // 책 제목으로 찾기
     public Book findBookByName(String bName) {
