@@ -53,8 +53,8 @@ public class MemberRepository {
     }
 
     public Optional<Member> findById(Long mId) {
-        return em.createQuery("select m from Member m where m.loginData.mId =:mId", Member.class)
-                .setParameter("mId", mId)
+        return em.createQuery("select m from Member m where m.id =:id", Member.class)
+                .setParameter("id", mId)
                 .getResultStream()
                 .findFirst();
     }

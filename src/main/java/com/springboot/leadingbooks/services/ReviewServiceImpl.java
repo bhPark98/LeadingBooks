@@ -10,6 +10,8 @@ import com.springboot.leadingbooks.services.dto.request.ReviewCreateRequestDto;
 import com.springboot.leadingbooks.services.dto.response.BookReviewResponseDto;
 import com.springboot.leadingbooks.global.response.error.CustomException;
 import com.springboot.leadingbooks.global.response.error.ErrorCode;
+import jakarta.persistence.EntityManager;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -20,9 +22,11 @@ public class ReviewServiceImpl implements ReviewService {
     private final ReviewRepository reviewRepository;
     private final BookRepository bookRepository;
     private final MemberRepository memberRepository;
+    private final EntityManager entityManager;
 
     // 도서 조회 로직
     @Override
+    @Transactional
     public BookReviewResponseDto getBookDetail(Long bId) {
         Book book = bookRepository.findBookById(bId).orElseThrow(
                 () -> new CustomException(ErrorCode.NOT_FOUND_BOOK)
@@ -32,6 +36,7 @@ public class ReviewServiceImpl implements ReviewService {
     }
     // 도서 리뷰 작성 로직
     @Override
+    @Transactional
     public BookReviewResponseDto WriteReview(ReviewCreateRequestDto reviewCreateRequestDto) {
         Book book = bookRepository.findBookById(reviewCreateRequestDto.getBId()).orElseThrow(
                 () -> new CustomException(ErrorCode.NOT_FOUND_BOOK)
@@ -48,6 +53,7 @@ public class ReviewServiceImpl implements ReviewService {
                 .build();
 
         reviewRepository.save(review);
+        entityManager.flush();
 
         return BookReviewResponseDto.of(book);
     }
