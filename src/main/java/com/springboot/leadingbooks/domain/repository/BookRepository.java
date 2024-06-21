@@ -44,8 +44,11 @@ public class BookRepository {
                 .getResultStream().findAny();
     }
 
-    public List<Book> findBookByCategory(Category category) {   // 책 카테고리로 찾기
-        return em.createQuery("select b from Book b where b.bCategory =:bCategory", Book.class)
+    public List<Book> findBookByCategory(int pageNumber, int pageSize, Category bCategory) {   // 책 카테고리로 찾기
+        return em.createQuery("select b from Book b where b.bCategory =: bCategory", Book.class)
+                .setParameter("bCategory", bCategory)
+                .setFirstResult(pageNumber * pageSize)
+                .setMaxResults(pageSize)
                 .getResultList();
     }
 

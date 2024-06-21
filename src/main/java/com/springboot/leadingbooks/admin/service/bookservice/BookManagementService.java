@@ -8,7 +8,6 @@ import com.springboot.leadingbooks.global.response.error.CustomException;
 import com.springboot.leadingbooks.global.response.error.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-
 import java.util.List;
 
 @Service
@@ -35,8 +34,8 @@ public class BookManagementService {
         return book;
     }
     // 책 카테고리별로 조회
-    public List<Book> findBookByCategory(Category category) {
-        return bookRepository.findBookByCategory(category);
+    public List<Book> findBookByCategory(int pageNumber, int pageSize, Category bCategory) {
+        return bookRepository.findBookByCategory(pageNumber, pageSize, bCategory);
     }
     // 단일 책 삭제
     public void deleteBook(Long bId) {
