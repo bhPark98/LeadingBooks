@@ -66,4 +66,11 @@ public class MemberRepository {
 
         return count == 0;
     }
+
+    public Optional<Member> findMemberByEmail(String mEmail) {
+        return em.createQuery("select m from Member m where m.loginData.mEmail =:mEmail", Member.class)
+                .setParameter("mEmail", mEmail)
+                .getResultStream()
+                .findFirst();
+    }
 }

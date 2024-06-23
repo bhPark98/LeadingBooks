@@ -25,4 +25,5 @@ spring:
     show-sql: true
 
 jwt:
+  expiration_time: 86400000
   secret: 553e8326984a2698d7b4bcef7741d885e43bd188b47b2d35ad08d98ffb30537b

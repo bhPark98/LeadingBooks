@@ -13,7 +13,10 @@ public enum ErrorCode {
     NOT_FOUND_BOOK(HttpStatus.NOT_FOUND, "NFB", "해당 책을 찾을 수 없습니다."),
     NOT_FOUND_STOPPED(HttpStatus.NOT_FOUND, "NFS", "정지회원이 존재하지 않습니다."),
     NOT_COUNT_BOOK(HttpStatus.NOT_FOUND, "NCB", "대여 가능한 도서가 존재하지 않습니다."),
-    DUPLICATED_NICKNAME(HttpStatus.IM_USED, "DN", "중복된 닉네임입니다. 다른 닉네임을 입력하여주세요.");
+    DUPLICATED_NICKNAME(HttpStatus.IM_USED, "DN", "중복된 닉네임입니다. 다른 닉네임을 입력하여주세요."),
+    NOT_FOUND_EMAIL(HttpStatus.NOT_FOUND, "NFE", "이메일이 존재하지 않습니다."),
+    NOT_MATCH_PASSWORD(HttpStatus.CONFLICT, "NMP", "비밀번호가 일치하지 않습니다."),
+    NOT_AUTHORIZED(HttpStatus.UNAUTHORIZED, "NA", "Not Authenticated Request");
 
     private final HttpStatus httpStatus;
     private final String code;

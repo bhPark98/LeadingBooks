@@ -23,7 +23,7 @@ public class Login {
     @Column(name = "m_phone", length = 11, nullable = false)
     private String mPhone;
 
-    @Column(name = "m_email", length = 100, nullable = false)
+    @Column(name = "m_email", length = 100, nullable = false, unique = true)
     private String mEmail;
 
     @Column(name = "m_nickname", length = 40, nullable = false)

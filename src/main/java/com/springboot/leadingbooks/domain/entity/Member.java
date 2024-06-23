@@ -18,9 +18,9 @@ import java.util.stream.Collectors;
 @Builder
 @EqualsAndHashCode(of = "id")
 @Entity
-public class Member extends BaseTimeEntity implements UserDetails {
+public class Member extends BaseTimeEntity {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "m_no")
     private Long id;
 
@@ -28,7 +28,7 @@ public class Member extends BaseTimeEntity implements UserDetails {
     private Login loginData;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "m_role")
+    @Column(name = "m_role", nullable = false)
     private Role mRole;
 
     @Column(name = "m_banned")
@@ -60,44 +60,4 @@ public class Member extends BaseTimeEntity implements UserDetails {
         }
     }
 
-    @ElementCollection(fetch = FetchType.EAGER)
-    @Builder.Default
-    private List<String> roles = new ArrayList<>();
-
-    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        return this.roles.stream()
-                .map(SimpleGrantedAuthority::new)
-                .collect(Collectors.toList());
-    }
-
-    @Override
-    public String getPassword() {
-        return null;
-    }
-
-    @Override
-    public String getUsername() {
-        return null;
-    }
-
-    @Override
-    public boolean isAccountNonExpired() {
-        return true;
-    }
-
-    @Override
-    public boolean isAccountNonLocked() {
-        return true;
-    }
-
-    @Override
-    public boolean isCredentialsNonExpired() {
-        return true;
-    }
-
-    @Override
-    public boolean isEnabled() {
-        return true;
-    }
 }

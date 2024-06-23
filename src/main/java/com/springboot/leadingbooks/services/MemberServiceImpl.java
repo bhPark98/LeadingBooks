@@ -6,46 +6,53 @@ import com.springboot.leadingbooks.domain.repository.CheckOutRepository;
 import com.springboot.leadingbooks.domain.repository.MemberRepository;
 import com.springboot.leadingbooks.global.response.error.CustomException;
 import com.springboot.leadingbooks.global.response.error.ErrorCode;
-import com.springboot.leadingbooks.services.dto.request.JwtTokenRequestDto;
+import com.springboot.leadingbooks.services.dto.request.CustomUserInfoDto;
+import com.springboot.leadingbooks.services.dto.request.LoginRequestDto;
 import com.springboot.leadingbooks.services.dto.response.BorrowedBookInfoDto;
 import com.springboot.leadingbooks.services.dto.response.myPageResponseDto;
-import com.springboot.leadingbooks.util.token.JwtTokenProvider;
+import com.springboot.leadingbooks.util.token.JwtUtil;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.modelmapper.ModelMapper;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
-import org.springframework.security.core.Authentication;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-@Transactional
 @Slf4j
+@Transactional
 public class MemberServiceImpl implements MemberService {
     private final MemberRepository memberRepository;
     private final CheckOutRepository checkOutRepository;
-    private final AuthenticationManagerBuilder authenticationManagerBuilder;
-    private final JwtTokenProvider jwtTokenProvider;
+    private final JwtUtil jwtUtil;
+    private final PasswordEncoder encoder;
+    private final ModelMapper modelMapper;
 
-    @Transactional
-    @Override
-    public JwtTokenRequestDto signin(String username, String password) {
-        // 1. username + password 기반으로 Authentication 객체 생성
-        // 이때 authentication 은 인증 여부를 확인하는 authenticated 값이 false
-        UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken =
-                new UsernamePasswordAuthenticationToken(username, password);
+    // 로그인
+    public String login(LoginRequestDto dto) {
+        String email = dto.getMEmail();
+        String password = dto.getMPwd();
+        Member member = memberRepository.findMemberByEmail(email).orElseThrow(
+                () -> new CustomException(ErrorCode.NOT_FOUND_EMAIL)
+        );
 
-        Authentication authentication =
-                authenticationManagerBuilder.getObject().authenticate(usernamePasswordAuthenticationToken);
+        // 암호화된 password를 디코딩한 값과 입력한 패스워드 값이 다르면 null 반환
+        if(!encoder.matches(password, member.getLoginData().getMPwd())) {
+            throw new CustomException(ErrorCode.NOT_MATCH_PASSWORD);
+        }
 
-        return jwtTokenProvider.generateToken(authentication);
+        CustomUserInfoDto info = modelMapper.map(member, CustomUserInfoDto.class);
+
+        String accessToken = jwtUtil.createAceesToken(info);
+        return accessToken;
     }
 
+
     // 마이페이지 조회
-    @Transactional
     public myPageResponseDto getBorrowedBooks(Long mId) {
         List<CheckOut> checkOuts = checkOutRepository.findByMemberId(mId);
 
