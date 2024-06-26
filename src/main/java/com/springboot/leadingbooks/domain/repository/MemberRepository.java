@@ -4,9 +4,9 @@ import com.springboot.leadingbooks.domain.entity.Member;
 import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
-
 import java.util.List;
 import java.util.Optional;
+import java.util.OptionalInt;
 
 @Repository
 @RequiredArgsConstructor
@@ -30,31 +30,11 @@ public class MemberRepository {
                 .getResultList();
 
     }
-    public Optional<String> findIdByEmail(String mName, String mEmail) {    // 이메일과 이름으로 아이디찾기
-        return em.createQuery("select m.loginData.mId from Member m where m.loginData.mName =:mName and m.loginData.mEmail =:mEmail", String.class)
-                .setParameter("mName", mName)
-                .setParameter("mEmail", mEmail)
-                .getResultStream().findAny();
-    }
 
-    public Optional<String> findPwdByEmail(String mId, String mEmail) { // 이메일과 아이디로 비밀번호 찾기
-        return em.createQuery("select m.loginData.mPwd from Member m where m.loginData.mId =:mId and m.loginData.mEmail =:mEmail", String.class)
-                .setParameter("mId", mId)
-                .setParameter("mEmail", mEmail)
-                .getResultStream().findAny();
-    }
 
-    public Optional<Member> findByName(String mName) {
-        return em.createQuery("select m from Member m where m.loginData.mName =:mName", Member.class)
-                .setParameter("mName", mName)
-                .getResultStream()
-                .findFirst();
-
-    }
-
-    public Optional<Member> findById(Long mId) {
+    public Optional<Member> findById(Long id) {
         return em.createQuery("select m from Member m where m.id =:id", Member.class)
-                .setParameter("id", mId)
+                .setParameter("id", id)
                 .getResultStream()
                 .findFirst();
     }
@@ -68,9 +48,10 @@ public class MemberRepository {
     }
 
     public Optional<Member> findMemberByEmail(String mEmail) {
-        return em.createQuery("select m from Member m where m.loginData.mEmail =:mEmail", Member.class)
+        return em.createQuery("select m from Member m where m.loginData.mEmail = :mEmail", Member.class)
                 .setParameter("mEmail", mEmail)
                 .getResultStream()
                 .findFirst();
     }
+
 }

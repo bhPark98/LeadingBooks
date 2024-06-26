@@ -30,7 +30,8 @@ public class CheckOutRepository {
     }
 
     public List<CheckOut> findByMemberId(Long mId) {
-        return em.createQuery("select c from CheckOut c where member.id =: mId", CheckOut.class)
+        return em.createQuery("select c from CheckOut c where member.id = :mId", CheckOut.class)
+                .setParameter("mId", mId)
                 .getResultList();
     }
 }

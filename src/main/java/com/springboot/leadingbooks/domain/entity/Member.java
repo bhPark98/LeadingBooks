@@ -3,20 +3,17 @@ package com.springboot.leadingbooks.domain.entity;
 import com.springboot.leadingbooks.domain.enum_.Role;
 import jakarta.persistence.*;
 import lombok.*;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
+import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.DynamicInsert;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-@Builder
-@EqualsAndHashCode(of = "id")
+@Table(name = "member")
+@DynamicInsert
 @Entity
 public class Member extends BaseTimeEntity {
     @Id
@@ -32,16 +29,23 @@ public class Member extends BaseTimeEntity {
     private Role mRole;
 
     @Column(name = "m_banned")
+    @ColumnDefault("false")
     private boolean mBanned;
 
-    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<CheckOut> checkOutList = new ArrayList<>();
 
-    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Review> reviewList = new ArrayList<>();
 
-    @OneToOne(mappedBy = "member", cascade = CascadeType.ALL)
+    @OneToOne(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
     private Stopped stopped;
+
+    @Builder
+    public Member(Login loginData, Role mRole) {
+        this.loginData = loginData;
+        this.mRole = mRole;
+    }
 
     public void changeBanned() {
         if(this.mBanned) {
@@ -59,5 +63,6 @@ public class Member extends BaseTimeEntity {
             this.mRole = Role.ADMIN;
         }
     }
+
 
 }

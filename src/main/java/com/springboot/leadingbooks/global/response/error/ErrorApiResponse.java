@@ -7,11 +7,17 @@ import java.time.LocalDateTime;
 
 @Getter
 @Setter
-public class ErrorResponseDto extends ApiResponse {
-    public ErrorResponseDto(CustomException e) {
+public class ErrorApiResponse<T> extends ApiResponse {
+
+    private ErrorApiResponse(CustomException e) {
         super(LocalDateTime.now().toString(),
                 e.getErrorCode().getHttpStatus().toString(),
                 e.getErrorCode().getCode(),
-                e.getMessage());
+                e.getMessage()
+                );
+    }
+
+    public static ErrorApiResponse<?> of(CustomException e) {
+        return new ErrorApiResponse<>(e);
     }
 }

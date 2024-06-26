@@ -10,6 +10,7 @@ import org.hibernate.annotations.ColumnDefault;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Table(name = "stopped")
 @Entity
 public class Stopped extends BaseTimeEntity {
     @Id

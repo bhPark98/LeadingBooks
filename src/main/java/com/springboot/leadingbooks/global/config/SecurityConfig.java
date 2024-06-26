@@ -24,13 +24,13 @@ public class SecurityConfig {
     private final JwtUtil jwtUtil;
 
     private static final String[] AUTH_WHITELIST = {
-            "/api/v1/**"
+            "api/v1/**"
     };
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         //CSRF, CORS
-        http.csrf((csrf) -> csrf.disable());
+        http.csrf(AbstractHttpConfigurer::disable);
         http.cors(Customizer.withDefaults());
 
         // 세션 관리 상태 없음으로 구성, Spring Security가 세션 생성 or 사용x
@@ -38,11 +38,8 @@ public class SecurityConfig {
                 SessionCreationPolicy.STATELESS));
 
         // FormLogin, BasicHttp 비활성화
-        http.formLogin((form) -> form.disable());
+        http.formLogin(AbstractHttpConfigurer::disable);
         http.httpBasic(AbstractHttpConfigurer::disable);
-
-        // JwtAuthFilter를 UsernamePasswordAuthenticationFilter 앞에 추가
-        http.addFilterBefore(new JwtAuthFilter(customUserDetailsService, jwtUtil), UsernamePasswordAuthenticationFilter.class);
 
 
         // 권한 규칙 작성
@@ -51,6 +48,10 @@ public class SecurityConfig {
 
                 .anyRequest().permitAll()
         );
+
+        // JwtAuthFilter를 UsernamePasswordAuthenticationFilter 앞에 추가
+        http.addFilterBefore(new JwtAuthFilter(customUserDetailsService, jwtUtil), UsernamePasswordAuthenticationFilter.class);
+
 
         return http.build();
     }

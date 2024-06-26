@@ -11,6 +11,7 @@ import java.util.List;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Table(name = "review")
 @Entity
 public class Review extends BaseTimeEntity {
     @Id
