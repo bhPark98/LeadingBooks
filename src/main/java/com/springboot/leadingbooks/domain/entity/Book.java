@@ -35,7 +35,7 @@ public class Book extends BaseTimeEntity {
     private Category bCategory;
 
     @Column(name = "b_count", nullable = false)
-    private int bCount = 0;
+    private int bCount = 1;
 
     @OneToMany(mappedBy = "book", cascade = CascadeType.ALL)
     private List<CheckOut> checkOutList = new ArrayList<>();

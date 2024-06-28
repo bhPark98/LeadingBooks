@@ -5,6 +5,7 @@ import com.springboot.leadingbooks.controller.dto.request.MemberRequestDto;
 import com.springboot.leadingbooks.domain.entity.Member;
 import com.springboot.leadingbooks.services.MemberService;
 import com.springboot.leadingbooks.controller.dto.request.LoginRequestDto;
+import com.springboot.leadingbooks.services.MemberServiceImpl;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -55,5 +56,17 @@ public class MemberController {
         memberService.changeNickname(mId, mNickname);
     }
 
-
+    // 이메일 전송
+    @PostMapping("emails/verification-requests")
+    public ResponseEntity<?> sendMessage(@RequestParam("email") @Valid String email) {
+        memberService.sendCodeToEmail(email);
+        return ResponseEntity.ok(HttpStatus.OK);
+    }
+    // 인증번호 검증
+    @GetMapping("emails/verifications")
+    public ResponseEntity<?> verificationEmail(@RequestParam("email") @Valid String email,
+                                               @RequestParam("code") String authCode) {
+        memberService.verifiedCode(email, authCode);
+        return ResponseEntity.ok(HttpStatus.OK);
+    }
 }

@@ -27,15 +27,27 @@ public class BookServiceImpl implements BookService {
 
     // 도서 등록 메서드
     public void RegisterBook(BookCreateRequestDto bookCreateRequestDto) {
-        Book book = Book.builder()
-                .bName(bookCreateRequestDto.getBName())
-                .bWriter(bookCreateRequestDto.getBWriter())
-                .bPublish(bookCreateRequestDto.getBPublish())
-                .bCategory(bookCreateRequestDto.getCategory())
-                .build();
+        String bName = bookCreateRequestDto.getBName();
 
-        book.increaseBookCount();
-        bookRepository.save(book);
+        if(bookRepository.isExistsBookName(bName)) {
+            Book book = bookRepository.findBookByName(bName).orElseThrow(
+                    () -> new CustomException(ErrorCode.NOT_FOUND_BOOK)
+            );
+
+            book.increaseBookCount();
+            bookRepository.save(book);
+        }
+        else {
+            Book book = Book.builder()
+                    .bName(bookCreateRequestDto.getBName())
+                    .bWriter(bookCreateRequestDto.getBWriter())
+                    .bPublish(bookCreateRequestDto.getBPublish())
+                    .bCategory(bookCreateRequestDto.getCategory())
+                    .build();
+
+
+            bookRepository.save(book);
+        }
 
     }
     // 책 제목으로 검색하기
