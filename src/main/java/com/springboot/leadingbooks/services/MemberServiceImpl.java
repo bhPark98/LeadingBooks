@@ -19,23 +19,32 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
 import java.util.List;
 import java.util.Optional;
+import java.util.Random;
 
 @Service
 @RequiredArgsConstructor
 @Slf4j
 @Transactional
 public class MemberServiceImpl implements MemberService {
+    private final MailService mailService;
     private final MemberRepository memberRepository;
     private final CheckOutRepository checkOutRepository;
     private final BCryptPasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
     private final PasswordEncoder encoder;
     private final ModelMapper modelMapper;
+    private static String authCode = "";
+
+    @Value("${spring.mail.auth-code-expiration-millis}")
+    private Long authCodeExpirationMillis;
 
     // 회원가입
     public Long join(MemberRequestDto dto) {
@@ -145,6 +154,44 @@ public class MemberServiceImpl implements MemberService {
         else
             throw new CustomException(ErrorCode.DUPLICATED_NICKNAME);
 
-
     }
+    // 이메일 인증번호 요청
+    public void sendCodeToEmail(String toEmail) {
+        this.checkDuplicatedEmail(toEmail);
+        String title = "leadingbooks 이메일 인증 번호";
+        authCode = this.createCode();
+        mailService.sendEmail(toEmail, title, authCode);
+    }
+    // 인증번호 생성
+    private String createCode() {
+        int length = 6;
+        try {
+            Random random = SecureRandom.getInstanceStrong();
+            StringBuilder builder = new StringBuilder();
+            for(int i = 0; i < length; i++) {
+                builder.append(random.nextInt(10));
+            }
+            return builder.toString();
+        } catch (NoSuchAlgorithmException e) {
+            log.debug("MemberService.createCode() exception occur");
+            throw new CustomException(ErrorCode.NO_SUCH_ALGORITHM);
+        }
+    }
+    // 이메일 중복 확인
+    private void checkDuplicatedEmail(String email) {
+        Optional<Member> member = memberRepository.findMemberByEmail(email);
+        if(member.isPresent()) {
+            log.debug("MemberServiceImpl.checkDuplicatedEmail exception occur email: {}", email);
+            throw new CustomException(ErrorCode.DUPLICATED_EMAIL);
+        }
+    }
+
+    // 인증번호 검증
+    public void verifiedCode(String email, String authCode) {
+        this.checkDuplicatedEmail(email);
+        if(!this.authCode.equals(authCode)) {
+            throw new CustomException(ErrorCode.NOT_MATCHES_AUTHCODE);
+        }
+    }
+
 }

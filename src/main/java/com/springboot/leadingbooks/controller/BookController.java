@@ -7,6 +7,9 @@ import com.springboot.leadingbooks.services.dto.request.BookCreateRequestDto;
 import com.springboot.leadingbooks.services.dto.response.FindBookResponseDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
@@ -25,8 +28,9 @@ public class BookController {
 
     // 도서 등록
     @PostMapping("/post/books")
-    public void postAllBooks(@RequestBody BookCreateRequestDto bookCreateRequestDto) {
+    public ResponseEntity<?> postAllBooks(@RequestBody BookCreateRequestDto bookCreateRequestDto) {
         bookService.RegisterBook(bookCreateRequestDto);
+        return ResponseEntity.ok(HttpStatus.OK);
     }
 
     // 책 제목으로 검색

@@ -59,4 +59,11 @@ public class BookRepository {
                 .getResultList();
     }
 
+    public boolean isExistsBookName(String bName) {
+        long count = em.createQuery("select count(b) from Book b where b.bName =: bName", Long.class)
+                .setParameter("bName", bName)
+                .getSingleResult();
+
+        return count != 0;
+    }
 }

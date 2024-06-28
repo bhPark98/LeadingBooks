@@ -4,7 +4,6 @@ import com.springboot.leadingbooks.admin.service.memberservice.MemberManagementS
 import com.springboot.leadingbooks.domain.entity.Book;
 import com.springboot.leadingbooks.domain.entity.CheckOut;
 import com.springboot.leadingbooks.domain.entity.Member;
-import com.springboot.leadingbooks.domain.entity.Stopped;
 import com.springboot.leadingbooks.domain.repository.BookRepository;
 import com.springboot.leadingbooks.domain.repository.CheckOutRepository;
 import com.springboot.leadingbooks.domain.repository.MemberRepository;
@@ -14,7 +13,6 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
-
 import java.util.List;
 import java.util.Optional;
 
@@ -40,6 +38,8 @@ public class CheckOutServiceImpl implements CheckOutService {
 
         if(book.getBCount() >= 1) {
             book.decreaseBookCount();
+            bookRepository.save(book);
+
             CheckOut checkOut = CheckOut.builder()
                     .book(book)
                     .member(member)

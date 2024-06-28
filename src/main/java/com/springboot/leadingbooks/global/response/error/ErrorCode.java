@@ -18,7 +18,12 @@ public enum ErrorCode {
     NOT_MATCH_PASSWORD(HttpStatus.CONFLICT, "NMP", "비밀번호가 일치하지 않습니다."),
     NOT_AUTHORIZED(HttpStatus.UNAUTHORIZED, "NA", "Not Authenticated Request"),
     DUPLICATED_EMAIL(HttpStatus.IM_USED, "DE", "존재하는 이메일이 있습니다."),
-    NOT_MATCHES_PASSWORD(HttpStatus.CONFLICT, "NMP", "비밀번호가 일치하지 않습니다.");
+    NOT_MATCHES_PASSWORD(HttpStatus.CONFLICT, "NMP", "비밀번호가 일치하지 않습니다."),
+    UNABLE_TO_SEND_EMAIL(HttpStatus.BAD_GATEWAY, "UTSE", "이메일을 전송할 수 없습니다."),
+    NO_SUCH_ALGORITHM(HttpStatus.NOT_FOUND, "NSA", "인증번호 생성 오류"),
+    NOT_MATCHES_AUTHCODE(HttpStatus.IM_USED, "NMA", "인증번호가 일치하지 않습니다."),
+    VALIDATION_FAIL(HttpStatus.BAD_REQUEST, "VF", "유효성 검증 실패하였습니다.");
+
 
     private final HttpStatus httpStatus;
     private final String code;

@@ -3,6 +3,8 @@ package com.springboot.leadingbooks.domain.entity;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.DynamicInsert;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,6 +13,7 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@DynamicInsert
 @Table(name = "check_out")
 @Entity
 public class CheckOut {
@@ -21,7 +24,7 @@ public class CheckOut {
 
     @Column(name = "c_date")
     @ColumnDefault("7")
-    private int cDate;
+    private int cDate = 7;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "b_no")

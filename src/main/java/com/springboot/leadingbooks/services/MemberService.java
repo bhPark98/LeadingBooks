@@ -17,4 +17,8 @@ public interface MemberService {
     public myPageResponseDto getBorrowedBooks(Long mId);
 
     public void changeNickname(Long mId, String mNickname);
+
+    public void sendCodeToEmail(String toEmail);
+
+    public void verifiedCode(String email, String authCode);
 }
