@@ -26,6 +26,10 @@ public class CheckOut {
     @ColumnDefault("7")
     private int cDate = 7;
 
+    @Column(name = "c_extend")
+    @ColumnDefault("false")
+    private boolean cExtend;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "b_no")
     private Book book;
@@ -36,5 +40,10 @@ public class CheckOut {
 
     public void setcDate(int cDate) {
         this.cDate = cDate;
+    }
+
+    public void extend() {
+        this.cExtend = true;
+        this.cDate += 7;
     }
 }

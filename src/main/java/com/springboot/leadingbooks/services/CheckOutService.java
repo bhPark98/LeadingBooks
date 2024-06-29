@@ -10,11 +10,6 @@ public interface CheckOutService {
     @Transactional
     void CheckOutBooks(Long bId, Long mId);
 
-    // 대출 기한 로직
-    @Scheduled(cron = "0 0 0 * * ?")
-    @Transactional
-    void updateCheckOutDates();
-
     // 도서 대여 기간 연장
-    void extendDates(Long mId, List<Long> bIds);
+    void extendDates(Long mId, Long bId);
 }

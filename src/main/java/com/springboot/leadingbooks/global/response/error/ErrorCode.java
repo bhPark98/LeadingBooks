@@ -22,7 +22,10 @@ public enum ErrorCode {
     UNABLE_TO_SEND_EMAIL(HttpStatus.BAD_GATEWAY, "UTSE", "이메일을 전송할 수 없습니다."),
     NO_SUCH_ALGORITHM(HttpStatus.NOT_FOUND, "NSA", "인증번호 생성 오류"),
     NOT_MATCHES_AUTHCODE(HttpStatus.IM_USED, "NMA", "인증번호가 일치하지 않습니다."),
-    VALIDATION_FAIL(HttpStatus.BAD_REQUEST, "VF", "유효성 검증 실패하였습니다.");
+    VALIDATION_FAIL(HttpStatus.BAD_REQUEST, "VF", "유효성 검증 실패하였습니다."),
+    DUPLICATED_BOOKS(HttpStatus.IM_USED, "DB", "이미 같은 책을 대여한 기록이 존재합니다."),
+    EXTENDED_BOOK(HttpStatus.ALREADY_REPORTED, "EB", "이미 한 번 연장한 도서입니다. 연장할 수 없습니다."),
+    NOT_BORROWED_BOOK(HttpStatus.NOT_FOUND, "NBB", "대여하지 않은 도서입니다. 도서를 먼저 대여 후 연장을 해주세요.");
 
 
     private final HttpStatus httpStatus;

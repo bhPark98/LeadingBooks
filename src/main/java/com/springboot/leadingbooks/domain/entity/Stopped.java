@@ -20,7 +20,7 @@ public class Stopped extends BaseTimeEntity {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "s_date")
-    private Period period;
+    private int sDate;
 
     @Column(name = "s_reason")
     private String sReason;
@@ -33,8 +33,8 @@ public class Stopped extends BaseTimeEntity {
     private Member member;
 
     @Builder
-    public Stopped(Period period, String sReason, Member member) {
-        this.period = period;
+    public Stopped(int sDate, String sReason, Member member) {
+        this.sDate = sDate;
         this.sReason = sReason;
         this.member = member;
         this.sCount++;
