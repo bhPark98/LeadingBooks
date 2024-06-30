@@ -5,6 +5,7 @@ import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -27,6 +28,17 @@ public class StoppedRepository {
     public Optional<Stopped> findById(Long sId) {
         return em.createQuery("select s from Stopped s where s.id =:id", Stopped.class)
                 .setParameter("id", sId)
+                .getResultStream().findAny();
+    }
+
+    public List<Stopped> findAll() {
+        return em.createQuery("select s from Stopped s", Stopped.class)
+                .getResultList();
+    }
+
+    public Optional<Stopped> findByMemberId(Long mId) {
+        return em.createQuery("select s from Stopped s where member.id =:id", Stopped.class)
+                .setParameter("id", mId)
                 .getResultStream().findAny();
     }
 }

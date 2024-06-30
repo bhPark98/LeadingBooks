@@ -19,6 +19,9 @@ public class Stopped extends BaseTimeEntity {
     private Long id;
 
     @Enumerated(EnumType.STRING)
+    @Column(name = "period")
+    private Period period;
+
     @Column(name = "s_date")
     private int sDate;
 
@@ -33,10 +36,24 @@ public class Stopped extends BaseTimeEntity {
     private Member member;
 
     @Builder
-    public Stopped(int sDate, String sReason, Member member) {
+    public Stopped(Period period, int sDate, String sReason, Member member, int sCount) {
+        this.period = period;
         this.sDate = sDate;
         this.sReason = sReason;
         this.member = member;
+        this.sCount = sCount;
+    }
+
+    public void changeDate(Period period, int sDate) {
+        this.period = period;
+        this.sDate = sDate;
+    }
+
+    public void decreaseSdate() {
+        this.sDate--;
+    }
+
+    public void increaseScount() {
         this.sCount++;
     }
 

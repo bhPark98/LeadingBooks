@@ -25,7 +25,10 @@ public enum ErrorCode {
     VALIDATION_FAIL(HttpStatus.BAD_REQUEST, "VF", "유효성 검증 실패하였습니다."),
     DUPLICATED_BOOKS(HttpStatus.IM_USED, "DB", "이미 같은 책을 대여한 기록이 존재합니다."),
     EXTENDED_BOOK(HttpStatus.ALREADY_REPORTED, "EB", "이미 한 번 연장한 도서입니다. 연장할 수 없습니다."),
-    NOT_BORROWED_BOOK(HttpStatus.NOT_FOUND, "NBB", "대여하지 않은 도서입니다. 도서를 먼저 대여 후 연장을 해주세요.");
+    NOT_BORROWED_BOOK(HttpStatus.NOT_FOUND, "NBB", "대여하지 않은 도서입니다. 도서를 먼저 대여 후 연장을 해주세요."),
+    CANNOT_BORROW_BOOKS(HttpStatus.UNAUTHORIZED, "CBB", "연체로 인한 정지입니다. 관리자에게 문의하세요."),
+    RETURNING_BOOK(HttpStatus.NOT_EXTENDED, "RB", "연체된 도서를 반납하지 않으면 연장이 불가능합니다."),
+    NOT_FOUND_BORROWED_INFO(HttpStatus.NOT_FOUND, "NFBI", "도서 대여 정보가 존재하지 않습니다.");
 
 
     private final HttpStatus httpStatus;

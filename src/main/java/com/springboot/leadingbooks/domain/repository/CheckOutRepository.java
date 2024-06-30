@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 @RequiredArgsConstructor
@@ -33,5 +34,12 @@ public class CheckOutRepository {
         return em.createQuery("select c from CheckOut c where member.id = :mId", CheckOut.class)
                 .setParameter("mId", mId)
                 .getResultList();
+    }
+
+    public Optional<CheckOut> findByMemberAndBookId(Long mId, Long bId) {
+        return em.createQuery("select c from CheckOut c where member.id =: mId and book.id =: bId", CheckOut.class)
+                .setParameter("mId", mId)
+                .setParameter("bId", bId)
+                .getResultStream().findAny();
     }
 }

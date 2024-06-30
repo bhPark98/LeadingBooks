@@ -21,9 +21,16 @@ public class CheckOutController {
         return ResponseEntity.ok(HttpStatus.OK);
     }
     // 대출 기한 연장
-    @PutMapping("extend/books")
+    @PutMapping("/extend/books")
     public ResponseEntity<?> extendBooks(@RequestParam("mId")Long mId, @RequestParam("bId")Long bId) {
         checkOutService.extendDates(mId, bId);
+        return ResponseEntity.ok(HttpStatus.OK);
+    }
+
+    // 도서 반납
+    @DeleteMapping("/return/books")
+    public ResponseEntity<?> returningBooks(@RequestParam("mId")Long mId, @RequestParam("bId")Long bId) {
+        checkOutService.returnBooks(mId, bId);
         return ResponseEntity.ok(HttpStatus.OK);
     }
 }
