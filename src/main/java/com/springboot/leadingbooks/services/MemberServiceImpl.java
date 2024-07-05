@@ -47,23 +47,29 @@ public class MemberServiceImpl implements MemberService {
     private Long authCodeExpirationMillis;
 
     // 회원가입
-    public Long join(MemberRequestDto dto) {
+    public void join(MemberRequestDto dto) {
         log.info("회원가입 시도 - 이메일: {}", dto.getEmail());
         Optional<Member> valiMember = memberRepository.findMemberByEmail(dto.getEmail());
         if(valiMember.isPresent()) {
             log.warn("중복된 이메일 - 이메일: {}", dto.getEmail());
             throw new CustomException(ErrorCode.DUPLICATED_EMAIL);
         }
-        // 비밀번호 해시처리
-        String encodedPassword = passwordEncoder.encode(dto.getPwd());
-        log.info("비밀번호 해시 처리 완료 - 이메일: {}", dto.getEmail());
+        String encodedPassword = "";
+        String pwd = dto.getPwd();
+        String rePwd = dto.getRePwd();
+        if(pwd.equals(rePwd)) {
+            // 비밀번호 해시처리
+            encodedPassword = passwordEncoder.encode(pwd);
+            log.info("비밀번호 해시 처리 완료 - 이메일: {}", dto.getEmail());
+        } else {
+            throw new CustomException(ErrorCode.NOT_MATCHES_PASSWORD);
+        }
 
         Login updatedLogin = Login.builder()
                 .mName(dto.getName())
                 .mEmail(dto.getEmail())
                 .mNickname(dto.getNickname())
                 .mPwd(encodedPassword)
-                .mPhone(dto.getPhone())
                 .build();
 
         Member member = Member.builder()
@@ -74,7 +80,6 @@ public class MemberServiceImpl implements MemberService {
         memberRepository.save(member);
         log.info("회원가입 성공 - 이메일: {}", dto.getEmail());
 
-        return member.getId();
     }
 
     // 로그인

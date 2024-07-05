@@ -2,41 +2,90 @@ package com.springboot.leadingbooks.controller;
 
 import com.springboot.leadingbooks.controller.dto.request.DeleteUserRequestDto;
 import com.springboot.leadingbooks.controller.dto.request.MemberRequestDto;
+import com.springboot.leadingbooks.controller.validators.SignUpValidator;
 import com.springboot.leadingbooks.domain.entity.Member;
 import com.springboot.leadingbooks.services.MemberService;
 import com.springboot.leadingbooks.controller.dto.request.LoginRequestDto;
 import com.springboot.leadingbooks.services.MemberServiceImpl;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.modelmapper.ModelMapper;
+import org.springframework.boot.Banner;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.Errors;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
 
-@RestController
+@Controller
 @RequiredArgsConstructor
 @Log4j2
 @RequestMapping("api/v1")
-@Validated
 public class MemberController {
     private final MemberService memberService;
+    private final SignUpValidator signUpValidator;
+
+    // 첫 회원가입 페이지
+    @GetMapping("/sign/up")
+    public String createForm(Model model) {
+        model.addAttribute("memberRequestDto", new MemberRequestDto());
+        return "members/createMemberForm";
+    }
 
     // 회원가입
-    @PostMapping("sign/up")
-    public ResponseEntity<?> addMember(@RequestBody @Valid MemberRequestDto dto) {
-        Long id = memberService.join(dto);
-        return ResponseEntity.status(HttpStatus.OK).body(id);
+    @PostMapping("/sign/up")
+    public String addMember(Model model, @Validated @ModelAttribute("memberRequestDto") MemberRequestDto memberRequestDto, BindingResult bindingResult, Errors errors) {
+
+        signUpValidator.validate(memberRequestDto, errors);
+
+        if(bindingResult.hasErrors())
+            return "members/createMemberForm";
+
+        if(errors.hasErrors())
+            return "members/createMemberForm";
+
+        memberService.join(memberRequestDto);
+
+        model.addAttribute("memberRequestDto", memberRequestDto);
+
+        return "members/success";
+
+    }
+
+    // 로그인 페이지
+    @GetMapping("sign/in")
+    public String signInForm(Model model) {
+        model.addAttribute("loginRequestDto", new LoginRequestDto());
+        return "members/login";
     }
 
     // 로그인
     @PostMapping("sign/in")
-    public ResponseEntity<?> login(@RequestBody @Valid LoginRequestDto loginRequestDto) {
+    public String login(Model model, @Validated @ModelAttribute("loginRequestDto") LoginRequestDto loginRequestDto, BindingResult bindingResult, HttpServletResponse response) {
         log.info("Received login request: {}", loginRequestDto);
+
+        if(bindingResult.hasErrors())
+            return "login";
+
         String token = memberService.login(loginRequestDto);
-        return ResponseEntity.ok().body(token);
+
+        Cookie cookie = new Cookie("access_token", token);
+        cookie.setMaxAge(60*60*24*7);
+        cookie.setHttpOnly(true);
+        cookie.setPath("/");
+
+        response.addCookie(cookie);
+
+        return "books/home";
     }
+
     // 회원탈퇴
     @DeleteMapping("delete/user")
     public ResponseEntity<?> deleteUser(@RequestBody DeleteUserRequestDto dto) {

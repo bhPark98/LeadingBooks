@@ -8,7 +8,7 @@ import com.springboot.leadingbooks.services.dto.response.myPageResponseDto;
 
 public interface MemberService {
 
-    public Long join(MemberRequestDto dto);
+    public void join(MemberRequestDto dto);
 
     public String login(LoginRequestDto dto);
 

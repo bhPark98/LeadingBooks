@@ -25,7 +25,7 @@ public class StoppedServiceImpl {
 
     // 대출 기한 로직
 //    @Scheduled(cron = "0 0 0 * * ?")
-    @Scheduled(cron = "0/5 * * * * ?")
+//    @Scheduled(cron = "0/5 * * * * ?")
     @Transactional
     public void updateCheckOutDates() {
         List<CheckOut> checkOutList = checkOutRepository.findAll();
@@ -46,7 +46,7 @@ public class StoppedServiceImpl {
 
     // 정지 회원 -> 회원 로직
 //    @Scheduled(cron = "0 0 0 * * ?")
-    @Scheduled(cron = "0/5 * * * * ?")
+//    @Scheduled(cron = "0/5 * * * * ?")
     @Transactional
     public void backMember() {
         List<Stopped> stoppedList = stoppedRepository.findAll();

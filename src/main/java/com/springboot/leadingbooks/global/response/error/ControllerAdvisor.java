@@ -1,24 +1,39 @@
 package com.springboot.leadingbooks.global.response.error;
 
+import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.servlet.ModelAndView;
+
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
-@RestControllerAdvice
+@ControllerAdvice
 public class ControllerAdvisor {
 
     @ExceptionHandler(value = MethodArgumentNotValidException.class)
-    protected ResponseEntity<?> handleBindException(MethodArgumentNotValidException e) {
+    protected ModelAndView handleBindException(MethodArgumentNotValidException e, Model model) {
         log.error("[Error] 에러 발생 ! errorCode : {}, errorMessage : {}",e.getMessage());
         List<String> errorList = e.getFieldErrors().stream().map(
             b -> b.getField() + " : " +b.getDefaultMessage()
         ).toList();
-        return ResponseEntity.status(ErrorCode.VALIDATION_FAIL.getHttpStatus())
-                .body(ErrorApiResponse.of(e, errorList));
+        model.addAttribute("errorMessages", errorList);
+        return new ModelAndView("members/createMemberForm", model.asMap());
+    }
+
+    @ExceptionHandler(value = ConstraintViolationException.class)
+    protected ModelAndView handleConstraintException(ConstraintViolationException e, Model model) {
+        log.error("[Error] 에러 발생 ! errorCode : {}, errorMessage : {}",e.getMessage());
+
+        ModelAndView mav = new ModelAndView("/members/createMemberForm");
+        mav.addObject("errorMessage", e.getMessage());
+        return mav;
     }
 
     @ExceptionHandler(value = CustomException.class)

@@ -40,3 +40,9 @@ spring:
         format_sql: true
     database: mysql
     show-sql: true
+
+  thymeleaf:
+    cache: false
+    check-template-location: true
+    prefix: classpath:/templates/
+    suffix: .html

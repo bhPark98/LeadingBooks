@@ -12,11 +12,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Login {
 
-    @Column(name = "m_pwd",length = 65, nullable = false, unique = true)
+    @Column(name = "m_pwd",length = 65, nullable = false)
     private String mPwd;
-
-    @Column(name = "m_phone", length = 11, nullable = false, unique = true)
-    private String mPhone;
 
     @Column(name = "m_email", length = 100, nullable = false, unique = true)
     private String mEmail;
@@ -28,12 +25,11 @@ public class Login {
     private String mName;
 
     @Builder
-    public Login(String mName, String mEmail, String mNickname, String mPwd, String mPhone) {
+    public Login(String mName, String mEmail, String mNickname, String mPwd) {
         this.mName = mName;
         this.mEmail = mEmail;
         this.mNickname = mNickname;
         this.mPwd = mPwd;
-        this.mPhone = mPhone;
     }
 
     public void changeNickname(String mNickname) {
