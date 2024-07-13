@@ -1,15 +1,27 @@
 package com.springboot.leadingbooks.util.token;
 
+import com.springboot.leadingbooks.controller.dto.response.JwtTokenResponseDto;
 import com.springboot.leadingbooks.services.dto.request.CustomUserInfoDto;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
+
+import java.lang.reflect.Array;
 import java.security.Key;
 import java.time.ZonedDateTime;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Date;
+import java.util.stream.Collectors;
 
 // JWT 관련 메서드를 제공하는 클래스
 @Slf4j
@@ -28,17 +40,21 @@ public class JwtUtil {
         this.accessTokenExpTime = accessTokenExpTime;
     }
 
-    // AccessToken 생성
-    public String createAceesToken(CustomUserInfoDto member) {
+
+    /**
+     * Access Token 생성
+     * @param member
+     * @return Access Token String
+     */
+    public String createAccessToken(CustomUserInfoDto member) {
         return createToken(member, accessTokenExpTime);
     }
 
-    // JWT 생성
     private String createToken(CustomUserInfoDto member, long expireTime) {
         Claims claims = Jwts.claims();
-        claims.put("mNo", member.getMNo());
-        claims.put("mEmail", member.getMEmail());
-        claims.put("mRole", member.getRole());
+        claims.put("memberId", member.getId());
+        claims.put("email", member.getMEmail());
+        claims.put("role", member.getRole());
 
         ZonedDateTime now = ZonedDateTime.now();
         ZonedDateTime tokenValidity = now.plusSeconds(expireTime);
@@ -51,9 +67,13 @@ public class JwtUtil {
                 .compact();
     }
 
-    // Token에서 User ID 추출
-    public Long getUserNo(String token) {
-        return parseClaims(token).get("mNo", Long.class);
+    /**
+     * Token에서 User ID 추출
+     * @param token
+     * @return User ID
+     */
+    public Long getUserId(String token) {
+        return parseClaims(token).get("memberId", Long.class);
     }
 
     // JWT 검증

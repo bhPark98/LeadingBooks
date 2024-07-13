@@ -16,4 +16,6 @@ public interface BookService {
     public List<Book> FindBookByCategory(int pageNumber, int pageSize, Category bCategory);
 
     public List<Book> getAllBooks(int pageNumber, int pageSize);
+
+    public Long getTotalBooks();
 }

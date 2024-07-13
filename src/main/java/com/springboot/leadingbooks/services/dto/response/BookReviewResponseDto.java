@@ -12,6 +12,7 @@
     @Data
     @AllArgsConstructor
     public class BookReviewResponseDto {
+        private Long bId;
         private String bName;
         private String bWriter;
         private String bPublish;
@@ -20,6 +21,7 @@
 
         public static BookReviewResponseDto of(Book book) {
             return BookReviewResponseDto.builder()
+                    .bId(book.getId())
                     .bName(book.getBName())
                     .bWriter(book.getBWriter())
                     .bPublish(book.getBPublish())

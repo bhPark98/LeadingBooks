@@ -15,7 +15,7 @@ public class ReviewResponseDto {
 
     public static ReviewResponseDto of(Review review) {
         return ReviewResponseDto.builder()
-                .mNickname(review.getMember().getLoginData().getMNickname())
+                .mNickname(review.getMember().getMNickname())
                 .rRating(review.getRRating())
                 .rContent(review.getRContent())
                 .build();

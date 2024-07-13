@@ -9,7 +9,7 @@ import lombok.*;
 @Getter
 @Setter
 public class CustomUserInfoDto {
-    private Long mNo;
+    private Long id;
     private String mEmail;
     private String mName;
     private String mPwd;

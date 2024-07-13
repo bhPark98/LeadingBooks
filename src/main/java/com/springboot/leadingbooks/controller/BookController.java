@@ -10,10 +10,12 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
-@RestController
+@Controller
 @RequiredArgsConstructor
 @Log4j2
 @RequestMapping("api/v1")
@@ -22,9 +24,29 @@ public class BookController {
 
     // 책 전체 조회
     @GetMapping("/all/books")
-    public List<Book> getAllBooks(@RequestParam(value = "page", defaultValue = "0") int page, @RequestParam int size) {
-        return bookService.getAllBooks(page, size);
+    public String getAllBooks(@RequestParam(value = "page", defaultValue = "0") int page, @RequestParam(value = "size", defaultValue = "10") int size, Model model) {
+        log.info("Received request : page = {}, size = {}", page, size);
+        List<Book> books = bookService.getAllBooks(page, size);
+        Long totalBooks = bookService.getTotalBooks();
+        int totalPages = (int) Math.ceil((double) totalBooks / size);
+
+        model.addAttribute("books", books);
+        model.addAttribute("page", page);
+        model.addAttribute("size", size);
+        model.addAttribute("totalPages", totalPages);
+
+        return "books/home";
     }
+
+//    // 책 전체 조회
+//    @GetMapping("/all/books")
+//    @ResponseBody
+//    public ResponseEntity<?> getAllBooks(@RequestParam(value = "page", defaultValue = "0") int page, @RequestParam(value = "size", defaultValue = "10") int size, Model model) {
+//        log.info("Received request : page = {}, size = {}", page, size);
+//        return ResponseEntity.ok(bookService.getAllBooks(page, size));
+//
+//    }
+
 
     // 도서 등록
     @PostMapping("/post/books")

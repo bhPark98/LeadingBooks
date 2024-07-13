@@ -32,15 +32,15 @@ public class MemberManagementService {
         );
         return member;
     }
-    // 회원 권한 변경
-    @Transactional
-    public void changeMemberRole(Long mId, Role role) {
-        Member member = memberRepository.findById(mId).orElseThrow(
-                () -> new CustomException(ErrorCode.NOT_FOUND_MEMBER)
-        );
-        member.changeRole(role);
-        memberRepository.save(member);
-    }
+//    // 회원 권한 변경
+//    @Transactional
+//    public void changeMemberRole(Long mId, Role role) {
+//        Member member = memberRepository.findById(mId).orElseThrow(
+//                () -> new CustomException(ErrorCode.NOT_FOUND_MEMBER)
+//        );
+//        member.changeRole(role);
+//        memberRepository.save(member);
+//    }
     // 회원 정지
     @Transactional
     public void punishMember(Long mId) {

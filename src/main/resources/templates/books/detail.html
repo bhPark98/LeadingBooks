@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <meta charset="UTF-8">
+        <title>책 세부 정보</title>
+    </head>
+    <body>
+    <h1>책 세부 정보</h1>
+    <div>
+        <h2>책 이름: <span th:text="${bookDetail.getBName()}"></span></h2>
+        <p>저자: <span th:text="${bookDetail.getBWriter()}"></span></p>
+        <p>출판사: <span th:text="${bookDetail.getBPublish()}"></span></p>
+        <p>카테고리: <span th:text="${bookDetail.getBCategory()}"></span></p>
+    </div>
+
+    <h2>리뷰</h2>
+    <div th:if="${#lists.isEmpty(bookDetail.getReview())}">
+        <p>리뷰가 없습니다.</p>
+    </div>
+    <div th:unless="${#lists.isEmpty(bookDetail.getReview())}">
+        <ul id="reviewList">
+            <li th:each="review : ${bookDetail.getReview()}">
+                <p>닉네임: <span th:text="${review.getMNickname()}"></span></p>
+                <p>내용: <span th:text="${review.getRContent()}"></span></p>
+                <p>별점: <span th:text="${review.getRRating()}"></span></p>
+            </li>
+        </ul>
+    </div>
+
+    <button id="writeReviewBtn">리뷰 작성</button>
+
+    <div id="reviewForm" style="display: none;">
+        <h3>리뷰 작성</h3>
+        <form id="reviewSubmitForm">
+            <input type="hidden" id="bId" th:value="${bookDetail.getBId()}">
+            <input type="hidden" id="mId">
+            <label for="rRating">평점:</label>
+            <input type="number" id="rRating" name="rRating" min="1" max="5" required><br>
+            <label for="rContent">내용:</label>
+            <textarea id="rContent" name="rContent" required></textarea><br>
+            <button type="submit">리뷰 제출</button>
+        </form>
+    </div>
+
+    <script>
+        document.getElementById("writeReviewBtn").addEventListener("click", function () {
+            document.getElementById("reviewForm").style.display="block";
+        });
+
+        document.getElementById("reviewSubmitForm").addEventListener("submit", function (event) {
+            event.preventDefault();
+            const reviewData = {
+                bId: document.getElementById("bId").value,
+                mId: document.getElementById("mId").value,
+                rRating: document.getElementById("rRating").value,
+                rContent: document.getElementById("rContent").value
+            };
+
+            fetch("/api/v1/write/reviews", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(reviewData)
+            })
+                .then(response => response.json())
+                .then(data => {
+                    const reviewList = document.getElementById("reviewList");
+                    const newReview = document.createElement("li");
+                    newReview.innerHTML = `<p>닉네임: ${data.mNickname}</p><p>내용: ${data.rContent}</p><p>별점: ${data.rRating}</p>`;
+                    reviewList.appendChild(newReview);
+                    document.getElementById("reviewForm").style.display="none";
+                    document.getElementById("reviewSubmitForm").reset();
+                })
+                .catch(error => console.error("Error:", error));
+        });
+
+        // 페이지 로드 시 회원 정보를 가져와서 mId 필드를 설정하는 함수
+        window.addEventListener("load", function () {
+            fetch("/api/v1/userInfo", {
+                method: "GET"
+            })
+                .then(response => response.text())
+                .then(userId => {
+                    document.getElementById("mId").value = userId; // 회원 ID 값을 설정
+                })
+                .catch(error => console.error("Error:", error));
+        });
+    </script>
+    </body>
+</html>

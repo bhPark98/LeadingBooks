@@ -1,5 +1,6 @@
 package com.springboot.leadingbooks.global.response.error;
 
+import com.springboot.leadingbooks.controller.dto.request.LoginRequestDto;
 import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -37,8 +38,17 @@ public class ControllerAdvisor {
     }
 
     @ExceptionHandler(value = CustomException.class)
-    protected ResponseEntity<?> customExceptionHandler(CustomException e) {
+    protected ModelAndView customExceptionHandler(CustomException e) {
         log.error("Error occurred in controller advice! errorCode: {}, errorMessage: {}", e.getErrorCode(), e.getMessage());
-        return ResponseEntity.status(e.getErrorCode().getHttpStatus()).body(ErrorApiResponse.of(e));
+
+        ModelAndView mav = new ModelAndView("/members/login");
+        mav.addObject("global", e.getMessage());
+        // 로그인 관련 오류인 경우에만 LoginRequestDto 추가
+        if (e.getErrorCode() == ErrorCode.NOT_AUTHORIZED ||
+                e.getErrorCode() == ErrorCode.NOT_MATCH_PASSWORD ||
+                e.getErrorCode() == ErrorCode.NOT_FOUND_EMAIL) {
+            mav.addObject("loginRequestDto", new LoginRequestDto());
+        }
+        return mav;
     }
 }

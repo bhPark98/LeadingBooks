@@ -13,7 +13,10 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+
+import javax.swing.text.html.Option;
 import java.util.List;
+import java.util.Optional;
 
 
 @Service
@@ -77,5 +80,10 @@ public class BookServiceImpl implements BookService {
         return bookRepository.findAllBooks(pageNumber, pageSize);
     }
 
+    // 책 전체 개수 로직
+    public Long getTotalBooks() {
+        Optional<Long> optionalLong = bookRepository.countBooks();
 
+        return optionalLong.orElse(0L);
+    }
 }

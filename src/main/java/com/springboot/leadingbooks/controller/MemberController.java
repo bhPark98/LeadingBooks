@@ -2,27 +2,30 @@ package com.springboot.leadingbooks.controller;
 
 import com.springboot.leadingbooks.controller.dto.request.DeleteUserRequestDto;
 import com.springboot.leadingbooks.controller.dto.request.MemberRequestDto;
+import com.springboot.leadingbooks.controller.dto.response.JwtTokenResponseDto;
 import com.springboot.leadingbooks.controller.validators.SignUpValidator;
 import com.springboot.leadingbooks.domain.entity.Member;
 import com.springboot.leadingbooks.services.MemberService;
 import com.springboot.leadingbooks.controller.dto.request.LoginRequestDto;
-import com.springboot.leadingbooks.services.MemberServiceImpl;
 import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.modelmapper.ModelMapper;
-import org.springframework.boot.Banner;
+import org.springframework.http.HttpRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.Errors;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.ModelAndView;
+
+import java.net.http.HttpResponse;
 
 @Controller
 @RequiredArgsConstructor
@@ -72,18 +75,30 @@ public class MemberController {
         log.info("Received login request: {}", loginRequestDto);
 
         if(bindingResult.hasErrors())
-            return "login";
+            return "members/login";
 
         String token = memberService.login(loginRequestDto);
+        log.info("token = {}", token);
 
-        Cookie cookie = new Cookie("access_token", token);
-        cookie.setMaxAge(60*60*24*7);
-        cookie.setHttpOnly(true);
+        Cookie accessTokenCookie = new Cookie("access_token", token);
+        accessTokenCookie.setMaxAge(60 * 60 * 24);
+        accessTokenCookie.setHttpOnly(true);
+        accessTokenCookie.setPath("/");
+        response.addCookie(accessTokenCookie);
+
+        return "redirect:/api/v1/all/books?page=0&size=10";
+    }
+
+    // 로그아웃
+    @GetMapping("/logout")
+    public String logout(HttpServletResponse response) {
+
+        Cookie cookie = new Cookie("access_token", null);
         cookie.setPath("/");
-
+        cookie.setMaxAge(0);
         response.addCookie(cookie);
 
-        return "books/home";
+        return "redirect:/api/v1/sign/in";
     }
 
     // 회원탈퇴
@@ -117,5 +132,18 @@ public class MemberController {
                                                @RequestParam("code") String authCode) {
         memberService.verifiedCode(email, authCode);
         return ResponseEntity.ok(HttpStatus.OK);
+    }
+
+    // 회원 정보 가져오기
+    @GetMapping("/userInfo")
+    @ResponseBody
+    public Long getUserInfo(@AuthenticationPrincipal UserDetails userDetails) {
+        // userDetails 객체를 사용해서 현재 인증된 사용자 정보를 가져옴
+        String username = userDetails.getUsername();
+        // UserService를 통해 사용자 정보를 가져옴
+        Member member = memberService.getMemberByUsername(username);
+
+        log.info("Retrieved member = {}", member);
+        return member.getId();
     }
 }

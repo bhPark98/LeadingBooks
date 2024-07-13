@@ -5,7 +5,9 @@
 </head>
 <body>
 <h1>로그인</h1>
-
+<div th:if="${global}">
+    <p th:text="${global}"></p>
+</div>
 <div class="frmSignIn">
 <form th:action="@{/api/v1/sign/in}" method="post" th:object="${loginRequestDto}">
     <div class="form-group">
@@ -15,14 +17,15 @@
     </div>
 
     <div class="form-group">
-        <label for="pwd">비밀번호</label>
-        <input type="password" id="pwd" th:field="*{pwd}" class="form-control" placeholder="비밀번호"/>
-        <span class="error" th:if="${#fields.hasErrors('pwd')}" th:errors="*{pwd}"></span>
+        <label for="password">비밀번호</label>
+        <input type="password" id="password" th:field="*{password}" class="form-control" placeholder="비밀번호"/>
+        <span class="error" th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></span>
     </div>
 
     <div>
         <button type="submit">로그인</button>
     </div>
+
 </form>
 </div>
 </body>

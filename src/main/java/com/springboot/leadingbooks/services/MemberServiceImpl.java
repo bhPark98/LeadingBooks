@@ -2,8 +2,8 @@ package com.springboot.leadingbooks.services;
 
 import com.springboot.leadingbooks.controller.dto.request.DeleteUserRequestDto;
 import com.springboot.leadingbooks.controller.dto.request.MemberRequestDto;
+import com.springboot.leadingbooks.controller.dto.response.JwtTokenResponseDto;
 import com.springboot.leadingbooks.domain.entity.CheckOut;
-import com.springboot.leadingbooks.domain.entity.Login;
 import com.springboot.leadingbooks.domain.entity.Member;
 import com.springboot.leadingbooks.domain.enum_.Role;
 import com.springboot.leadingbooks.domain.repository.CheckOutRepository;
@@ -20,6 +20,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -34,13 +37,13 @@ import java.util.Random;
 @Slf4j
 @Transactional
 public class MemberServiceImpl implements MemberService {
+    private final ModelMapper modelMapper;
+    private final JwtUtil jwtUtil;
     private final MailService mailService;
     private final MemberRepository memberRepository;
     private final CheckOutRepository checkOutRepository;
     private final BCryptPasswordEncoder passwordEncoder;
-    private final JwtUtil jwtUtil;
     private final PasswordEncoder encoder;
-    private final ModelMapper modelMapper;
     private static String authCode = "";
 
     @Value("${spring.mail.auth-code-expiration-millis}")
@@ -65,17 +68,13 @@ public class MemberServiceImpl implements MemberService {
             throw new CustomException(ErrorCode.NOT_MATCHES_PASSWORD);
         }
 
-        Login updatedLogin = Login.builder()
+        Member member = Member.builder()
                 .mName(dto.getName())
                 .mEmail(dto.getEmail())
                 .mNickname(dto.getNickname())
-                .mPwd(encodedPassword)
+                .password(encodedPassword)
                 .build();
 
-        Member member = Member.builder()
-                .loginData(updatedLogin)
-                .mRole(Role.USER)
-                .build();
 
         memberRepository.save(member);
         log.info("회원가입 성공 - 이메일: {}", dto.getEmail());
@@ -83,21 +82,22 @@ public class MemberServiceImpl implements MemberService {
     }
 
     // 로그인
+    @Transactional
     public String login(LoginRequestDto dto) {
         String email = dto.getEmail();
-        String password = dto.getPwd();
+        String password = dto.getPassword();
         Member member = memberRepository.findMemberByEmail(email).orElseThrow(
                 () -> new CustomException(ErrorCode.NOT_FOUND_EMAIL)
         );
 
         // 암호화된 password를 디코딩한 값과 입력한 패스워드 값이 다르면 null 반환
-        if(!encoder.matches(password, member.getLoginData().getMPwd())) {
+        if (!encoder.matches(password, member.getPassword())) {
             throw new CustomException(ErrorCode.NOT_MATCH_PASSWORD);
         }
 
         CustomUserInfoDto info = modelMapper.map(member, CustomUserInfoDto.class);
 
-        String accessToken = jwtUtil.createAceesToken(info);
+        String accessToken = jwtUtil.createAccessToken(info);
         return accessToken;
     }
 
@@ -110,7 +110,7 @@ public class MemberServiceImpl implements MemberService {
                 () -> new CustomException(ErrorCode.NOT_FOUND_MEMBER)
         );
 
-        if(pwd.equals(rePwd) && passwordEncoder.matches(pwd, member.getLoginData().getMPwd())) {
+        if(pwd.equals(rePwd) && passwordEncoder.matches(pwd, member.getPassword())) {
             memberRepository.delete(member);
         }
         else {
@@ -126,9 +126,9 @@ public class MemberServiceImpl implements MemberService {
                 () -> new CustomException(ErrorCode.NOT_FOUND_MEMBER)
         );
 
-        String mName = member.getLoginData().getMName();
-        String mNickname = member.getLoginData().getMNickname();
-        String mEmail = member.getLoginData().getMEmail();
+        String mName = member.getMName();
+        String mNickname = member.getMNickname();
+        String mEmail = member.getMEmail();
 
         List<BorrowedBookInfoDto> borrowedBooks = checkOuts.stream()
                 .map(checkOut -> new BorrowedBookInfoDto(
@@ -153,7 +153,7 @@ public class MemberServiceImpl implements MemberService {
 
         boolean isNicknameNotExist = memberRepository.isNotExistsNickname(mNickname);
         if(isNicknameNotExist) {
-            member.getLoginData().changeNickname(mNickname);
+            member.changeNickname(mNickname);
             memberRepository.save(member);
         }
         else
@@ -197,6 +197,11 @@ public class MemberServiceImpl implements MemberService {
         if(!this.authCode.equals(authCode)) {
             throw new CustomException(ErrorCode.NOT_MATCHES_AUTHCODE);
         }
+    }
+    // 토큰으로 우저정보 반환
+    public Member getMemberByUsername(String username) {
+        Long mId = Long.parseLong(username);
+        return memberRepository.findById(mId).orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_MEMBER));
     }
 
 }

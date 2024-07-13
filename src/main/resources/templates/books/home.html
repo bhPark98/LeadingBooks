@@ -1,10 +1,78 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
+    <style>
+        ul.pagination {
+            list-style-type: none;
+            padding: 0;
+        }
+        ul.pagination li {
+            display: inline;
+            margin-right: 5px;
+        }
+        ul.pagination li a {
+            text-decoration: none;
+            padding: 5px 10px;
+            border: 1px solid #ccc;
+            color: #333;
+        }
+        ul.pagination li a.active {
+            font-weight: bold;
+            background-color: #eee;
+        }
+    </style>
 </head>
 <body>
     <h1>홈입니다.</h1>
+    <div>
+        <h2>책 목록</h2>
+        <ul>
+            <li th:each="book : ${books}">
+                <a th:href="@{/api/v1/detail/reviews(bId=${book.getId()})}">
+                <span th:text="${book.getBName()}">책 제목</span>
+                </a>
+            </li>
+        </ul>
+    </div>
+    <div>
+        <ul class="pagination">
+            <li th:if="${page > 0}">
+                <a th:href="@{/api/v1/all/books(page=${page - 1}, size=${size})}">&lt;</a>
+            </li>
+            <li th:each="i : ${#numbers.sequence(0, totalPages - 1)}">
+                <a th:href="@{/api/v1/all/books(page=${i}, size=${size})}"
+                   th:text="${i + 1}"
+                   th:classappend="${i == page} ? 'active' : ''"></a>
+            </li>
+            <li th:if="${page < totalPages - 1}">
+                <a th:href="@{/api/v1/all/books(page=${page + 1}, size=${size})}">&gt;</a>
+            </li>
+        </ul>
+    </div>
+
+    <form th:action="@{/api/v1/logout}" method="get">
+        <button type="submit">로그아웃</button>
+    </form>
+
+    <form th:action="@{/api/v1/myPage/{mId}}" method="get">
+        <button type="submit">내정보</button>
+    </form>
+
+
+    <script>
+        // 페이지 로드 시 회원 정보를 가져와서 mId 필드를 설정하는 함수
+        window.addEventListener("load", function() {
+            fetch("/api/v1/userInfo", {
+                method: "GET"
+            })
+                .then(response => response.text())
+                .then(userId => {
+                    document.getElementById("mId").value = userId;
+                })
+                .catch(error => console.error("Error:", error));
+        });
+    </script>
 </body>
 </html>

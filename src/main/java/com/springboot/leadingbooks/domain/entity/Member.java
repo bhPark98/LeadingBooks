@@ -5,15 +5,16 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.DynamicInsert;
-
 import java.util.ArrayList;
 import java.util.List;
+
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Table(name = "member")
 @DynamicInsert
+@Builder
 @Entity
 public class Member extends BaseTimeEntity {
     @Id
@@ -21,16 +22,25 @@ public class Member extends BaseTimeEntity {
     @Column(name = "m_no")
     private Long id;
 
-    @Embedded
-    private Login loginData;
+    @Column(name = "m_pwd",length = 65, nullable = false)
+    private String password;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "m_role", nullable = false)
-    private Role mRole;
+    @Column(name = "m_name", nullable = false)
+    private String mName;
+
+    @Column(name = "m_email", length = 100, nullable = false, unique = true)
+    private String mEmail;
+
+    @Column(name = "m_nickname", length = 40, nullable = false, unique = true)
+    private String mNickname;
 
     @Column(name = "m_banned")
     @ColumnDefault("false")
     private boolean mBanned;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "m_role", nullable = false)
+    private Role role;
 
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<CheckOut> checkOutList = new ArrayList<>();
@@ -42,10 +52,17 @@ public class Member extends BaseTimeEntity {
     private Stopped stopped;
 
     @Builder
-    public Member(Login loginData, Role mRole) {
-        this.loginData = loginData;
-        this.mRole = mRole;
+    public Member(String mName, String mEmail, String mNickname, String password) {
+        this.mName = mName;
+        this.mEmail = mEmail;
+        this.mNickname = mNickname;
+        this.password = password;
     }
+
+
+    public void changeNickname(String mNickname) {
+    this.mNickname = mNickname;
+}
 
     public void changeBanned() {
         if(this.mBanned) {
@@ -53,14 +70,6 @@ public class Member extends BaseTimeEntity {
         }
         else {
             this.mBanned = true;
-        }
-    }
-
-    public void changeRole(Role mRole) {
-        if(this.mRole == Role.ADMIN) {
-            this.mRole = Role.USER;
-        }else {
-            this.mRole = Role.ADMIN;
         }
     }
 

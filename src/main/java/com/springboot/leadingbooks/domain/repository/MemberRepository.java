@@ -40,7 +40,7 @@ public class MemberRepository {
     }
 
     public boolean isNotExistsNickname(String mNickname) {
-        long count = em.createQuery("select count(m) from Member m where m.loginData.mNickname = :mNickname", Long.class)
+        long count = em.createQuery("select count(m) from Member m where m.mNickname = :mNickname", Long.class)
                 .setParameter("mNickname", mNickname)
                 .getSingleResult();
 
@@ -48,14 +48,14 @@ public class MemberRepository {
     }
 
     public Optional<Member> findMemberByEmail(String mEmail) {
-        return em.createQuery("select m from Member m where m.loginData.mEmail = :mEmail", Member.class)
+        return em.createQuery("select m from Member m where m.mEmail = :mEmail", Member.class)
                 .setParameter("mEmail", mEmail)
                 .getResultStream()
                 .findFirst();
     }
 
     public Optional<Member> findMemberByNickname(String mNickname) {
-        return em.createQuery("select m.loginData.mNickname from Member m where m.loginData.mNickname = :mNickname", Member.class)
+        return em.createQuery("select m.mNickname from Member m where m.mNickname = :mNickname", Member.class)
                 .setParameter("mNickname", mNickname)
                 .getResultStream()
                 .findFirst();
