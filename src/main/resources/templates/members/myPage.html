@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>내정보</title>
+</head>
+<body>
+<h1>내정보</h1>
+<div>
+    <p>이름: <span th:text="${myPageResponseDto.getMName()}"></span></p>
+    <p>닉네임: <span th:text="${myPageResponseDto.getMNickname()}"></span></p>
+    <p>이메일: <span th:text="${myPageResponseDto.getMEmail()}"></span></p>
+</div>
+
+<h2>대출한 책 목록</h2>
+<ul>
+    <li th:each="book : ${myPageResponseDto.getBooksInfo()}">
+        <span th:text="${book.getBName()}"></span> - <span th:text="${book.getCDate()}"></span>
+    </li>
+</ul>
+</body>
+</html>

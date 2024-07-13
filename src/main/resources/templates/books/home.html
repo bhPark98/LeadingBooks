@@ -56,10 +56,9 @@
         <button type="submit">로그아웃</button>
     </form>
 
-    <form th:action="@{/api/v1/myPage/{mId}}" method="get">
+    <form id="myPageForm" method="get">
         <button type="submit">내정보</button>
     </form>
-
 
     <script>
         // 페이지 로드 시 회원 정보를 가져와서 mId 필드를 설정하는 함수
@@ -69,7 +68,9 @@
             })
                 .then(response => response.text())
                 .then(userId => {
-                    document.getElementById("mId").value = userId;
+                    // mId를 기반으로 폼 액션 URL을 설정
+                    const myPageForm = document.getElementById("myPageForm");
+                    myPageForm.action = `/api/v1/myPage/${userId}`;
                 })
                 .catch(error => console.error("Error:", error));
         });

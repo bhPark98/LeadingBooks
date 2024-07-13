@@ -7,6 +7,7 @@ import com.springboot.leadingbooks.controller.validators.SignUpValidator;
 import com.springboot.leadingbooks.domain.entity.Member;
 import com.springboot.leadingbooks.services.MemberService;
 import com.springboot.leadingbooks.controller.dto.request.LoginRequestDto;
+import com.springboot.leadingbooks.services.dto.response.MyPageResponseDto;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -111,8 +112,11 @@ public class MemberController {
 
     // 내정보 확인
     @GetMapping("/myPage/{mId}")
-    public ResponseEntity<?> getMyPage(@PathVariable Long mId) {
-        return ResponseEntity.ok(memberService.getBorrowedBooks(mId));
+    public String getMyPage(@PathVariable String mId, Model model) {
+         MyPageResponseDto myPageResponseDto = memberService.getBorrowedBooks(Long.parseLong(mId));
+         model.addAttribute("myPageResponseDto", myPageResponseDto);
+
+         return "members/myPage";
     }
     // 닉네임 변경
     @PutMapping("/changeNickname/{mId}")

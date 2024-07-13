@@ -2,10 +2,8 @@ package com.springboot.leadingbooks.services;
 
 import com.springboot.leadingbooks.controller.dto.request.DeleteUserRequestDto;
 import com.springboot.leadingbooks.controller.dto.request.MemberRequestDto;
-import com.springboot.leadingbooks.controller.dto.response.JwtTokenResponseDto;
 import com.springboot.leadingbooks.domain.entity.CheckOut;
 import com.springboot.leadingbooks.domain.entity.Member;
-import com.springboot.leadingbooks.domain.enum_.Role;
 import com.springboot.leadingbooks.domain.repository.CheckOutRepository;
 import com.springboot.leadingbooks.domain.repository.MemberRepository;
 import com.springboot.leadingbooks.global.response.error.CustomException;
@@ -13,16 +11,13 @@ import com.springboot.leadingbooks.global.response.error.ErrorCode;
 import com.springboot.leadingbooks.services.dto.request.CustomUserInfoDto;
 import com.springboot.leadingbooks.controller.dto.request.LoginRequestDto;
 import com.springboot.leadingbooks.services.dto.response.BorrowedBookInfoDto;
-import com.springboot.leadingbooks.services.dto.response.myPageResponseDto;
+import com.springboot.leadingbooks.services.dto.response.MyPageResponseDto;
 import com.springboot.leadingbooks.util.token.JwtUtil;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -119,7 +114,7 @@ public class MemberServiceImpl implements MemberService {
     }
 
     // 마이페이지 조회
-    public myPageResponseDto getBorrowedBooks(Long mId) {
+    public MyPageResponseDto getBorrowedBooks(Long mId) {
         List<CheckOut> checkOuts = checkOutRepository.findByMemberId(mId);
 
         Member member = memberRepository.findById(mId).orElseThrow(
@@ -137,7 +132,7 @@ public class MemberServiceImpl implements MemberService {
                 ))
                 .toList();
 
-        return myPageResponseDto.builder()
+        return MyPageResponseDto.builder()
                 .mName(mName)
                 .mNickname(mNickname)
                 .mEmail(mEmail)

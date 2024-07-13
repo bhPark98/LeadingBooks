@@ -3,9 +3,8 @@ package com.springboot.leadingbooks.services;
 import com.springboot.leadingbooks.controller.dto.request.DeleteUserRequestDto;
 import com.springboot.leadingbooks.controller.dto.request.LoginRequestDto;
 import com.springboot.leadingbooks.controller.dto.request.MemberRequestDto;
-import com.springboot.leadingbooks.controller.dto.response.JwtTokenResponseDto;
 import com.springboot.leadingbooks.domain.entity.Member;
-import com.springboot.leadingbooks.services.dto.response.myPageResponseDto;
+import com.springboot.leadingbooks.services.dto.response.MyPageResponseDto;
 
 public interface MemberService {
 
@@ -15,7 +14,7 @@ public interface MemberService {
 
     public void deleteMember(DeleteUserRequestDto dto);
 
-    public myPageResponseDto getBorrowedBooks(Long mId);
+    public MyPageResponseDto getBorrowedBooks(Long mId);
 
     public void changeNickname(Long mId, String mNickname);
 

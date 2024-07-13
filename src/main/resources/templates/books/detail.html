@@ -28,6 +28,7 @@
     </div>
 
     <button id="writeReviewBtn">리뷰 작성</button>
+    <button id="borrowBookBtn">도서 대여</button>
 
     <div id="reviewForm" style="display: none;">
         <h3>리뷰 작성</h3>
@@ -86,6 +87,24 @@
                 })
                 .catch(error => console.error("Error:", error));
         });
+
+        // 도서 대여 버튼 클릭 이벤트 핸들러 추가
+        document.getElementById("borrowBookBtn").addEventListener("click", function () {
+            const bId = document.getElementById("bId").value;
+            const mId = document.getElementById("mId").value;
+
+            fetch(`/api/v1/borrow/books?bId=${bId}&mId=${mId}`, {
+                method: "GET"
+            })
+                .then(response => {
+                    if(response.ok) {
+                        alert("도서 대여 성공!");
+                    } else {
+                        alert("도서 대여 실패!");
+                    }
+                })
+                .catch(error => console.error("Error:", error));
+        })
     </script>
     </body>
 </html>
