@@ -127,6 +127,7 @@ public class MemberServiceImpl implements MemberService {
 
         List<BorrowedBookInfoDto> borrowedBooks = checkOuts.stream()
                 .map(checkOut -> new BorrowedBookInfoDto(
+                        checkOut.getBook().getId(),
                         checkOut.getBook().getBName(),
                         checkOut.getCDate()
                 ))

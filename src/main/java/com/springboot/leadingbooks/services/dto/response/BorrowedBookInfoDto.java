@@ -8,6 +8,7 @@ import lombok.Data;
 @Data
 @AllArgsConstructor
 public class BorrowedBookInfoDto {
+    private Long bId;
     private String bName;
     private int cDate;
 }

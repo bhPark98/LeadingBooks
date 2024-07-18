@@ -3,6 +3,7 @@ package com.springboot.leadingbooks.global.response.error;
 import com.springboot.leadingbooks.controller.dto.request.LoginRequestDto;
 import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.boot.Banner;
 import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -15,7 +16,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Slf4j
-@ControllerAdvice
+@RestControllerAdvice
 public class ControllerAdvisor {
 
     @ExceptionHandler(value = MethodArgumentNotValidException.class)
@@ -38,17 +39,17 @@ public class ControllerAdvisor {
     }
 
     @ExceptionHandler(value = CustomException.class)
-    protected ModelAndView customExceptionHandler(CustomException e) {
+    protected ResponseEntity<?> customExceptionHandler(CustomException e) {
         log.error("Error occurred in controller advice! errorCode: {}, errorMessage: {}", e.getErrorCode(), e.getMessage());
+        ErrorCode errorCode = e.getErrorCode();
+        ErrorResponseDto errorResponseDto = new ErrorResponseDto(
+                errorCode.getHttpStatus(),
+                errorCode.getCode(),
+                errorCode.getMessage()
+        );
+        log.error("status = {}, code = {}, message = {}", errorResponseDto.getStatus(), errorResponseDto.getCode(), errorResponseDto.getMessage());
 
-        ModelAndView mav = new ModelAndView("/members/login");
-        mav.addObject("global", e.getMessage());
-        // 로그인 관련 오류인 경우에만 LoginRequestDto 추가
-        if (e.getErrorCode() == ErrorCode.NOT_AUTHORIZED ||
-                e.getErrorCode() == ErrorCode.NOT_MATCH_PASSWORD ||
-                e.getErrorCode() == ErrorCode.NOT_FOUND_EMAIL) {
-            mav.addObject("loginRequestDto", new LoginRequestDto());
-        }
-        return mav;
+        return new ResponseEntity<>(errorResponseDto, errorCode.getHttpStatus());
+
     }
 }

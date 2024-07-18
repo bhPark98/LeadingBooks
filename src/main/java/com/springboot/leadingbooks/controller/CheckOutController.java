@@ -5,9 +5,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-@RestController
+@Controller
 @RequiredArgsConstructor
 @Log4j2
 @RequestMapping("api/v1")
@@ -22,9 +23,10 @@ public class CheckOutController {
     }
     // 대출 기한 연장
     @PutMapping("/extend/books")
-    public ResponseEntity<?> extendBooks(@RequestParam("mId")Long mId, @RequestParam("bId")Long bId) {
+    public void extendBooks(@RequestParam("mId")Long mId, @RequestParam("bId")Long bId) {
         checkOutService.extendDates(mId, bId);
-        return ResponseEntity.ok(HttpStatus.OK);
+        log.info("mId = {}, bId = {}", mId, bId);
+
     }
 
     // 도서 반납

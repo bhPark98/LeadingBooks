@@ -114,7 +114,9 @@ public class MemberController {
     @GetMapping("/myPage/{mId}")
     public String getMyPage(@PathVariable String mId, Model model) {
          MyPageResponseDto myPageResponseDto = memberService.getBorrowedBooks(Long.parseLong(mId));
+         log.info("myPageResponseDto = {}", myPageResponseDto);
          model.addAttribute("myPageResponseDto", myPageResponseDto);
+         model.addAttribute("mId", mId);
 
          return "members/myPage";
     }

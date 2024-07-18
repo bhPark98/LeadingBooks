@@ -15,8 +15,121 @@
 <h2>대출한 책 목록</h2>
 <ul>
     <li th:each="book : ${myPageResponseDto.getBooksInfo()}">
+        <label>
+            <input type="checkbox" class="book-checkbox" th:value="${book.getBId()}">
+        </label>
         <span th:text="${book.getBName()}"></span> - <span th:text="${book.getCDate()}"></span>
     </li>
 </ul>
+<div>
+    <form action="@{/api/v1/extend/books}">
+        <button type="button" id="extendBookBtn">도서 연장</button>
+        <input type="hidden" th:value="${mId}" class="mId">
+    </form>
+</div>
+<div>
+    <form action="@{/api/v1/return/books}">
+        <button type="button" id="returnBookBtn">도서 반납</button>
+        <input type="hidden" th:value="${mId}" class="mId">
+    </form>
+</div>
+<script>
+    document.getElementById("extendBookBtn").addEventListener("click", function () {
+        const mId = document.querySelector(".mId").value;
+        const checkBooks = document.querySelectorAll(".book-checkbox:checked");
+
+        if (checkBooks.length === 0) {
+            alert("연장할 책을 선택하세요.");
+            return;
+        }
+
+        const bookIds = Array.from(checkBooks).map(checkBook => checkBook.value);
+
+        const requests = bookIds.map(bId => {
+            return fetch(`/api/v1/extend/books?mId=${mId}&bId=${bId}`, {
+                method: "PUT"
+            })
+                .then(response => response.json().then(data => ({response, data})))
+                .then(({response, data}) => {
+                    console.log(response, data);
+                    if(!response.ok) {
+                        throw new Error(data.message || "연장 실패!");
+                    }
+                    if(response.status === 208) {
+                        throw new Error(data.message || "이미 한 번 연장한 도서입니다. 연장할 수 없습니다.");
+                    }
+                    return { status: "fulfilled", data};
+                })
+                .catch(error => ({ status : "rejected", reason: error}));
+        });
+
+        Promise.allSettled(requests)
+            .then(results => {
+                console.log(results);
+                const failedRequests = results.filter(result => result.status === 'rejected');
+                const successfulRequests = results.filter(result => result.status === 'fulfilled');
+
+                if (successfulRequests.length > 0) {
+                    alert("도서 대여 연장 성공!");
+                }
+
+                if (failedRequests.length > 0) {
+                    const errorMessages = new Set(failedRequests.map(result => result.reason.message));
+                    alert(`도서 연장 실패: ${[...errorMessages].join("\n")}`);
+                }
+            })
+            .catch(error => {
+                alert("도서 연장 실패: 서버 오류 발생!");
+            });
+    });
+
+    document.getElementById("returnBookBtn").addEventListener("click", function () {
+        const mId = document.querySelector(".mId").value;
+        const checkBooks = document.querySelectorAll(".book-checkbox:checked");
+
+        if (checkBooks.length === 0) {
+            alert("반납할 책을 선택하세요.");
+            return;
+        }
+
+        const bookIds = Array.from(checkBooks).map(checkBook => checkBook.value);
+
+        const requests = bookIds.map(bId => {
+            return fetch(`/api/v1/return/books?mId=${mId}&bId=${bId}`, {
+                method: "DELETE"
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        return response.json().then(data => {
+                            throw new Error(data.message || "반납 실패");
+                        });
+                    }
+                    return response.json().then(data => ({ status: "fulfilled", data }));
+                })
+                .catch(error => ({ status: "rejected", reason: error }));
+        });
+
+        Promise.allSettled(requests)
+            .then(results => {
+                console.log(results);
+                const failedRequests = results.filter(result => result.status === 'rejected');
+                const successfulRequests = results.filter(result => result.status === 'fulfilled');
+
+                if (successfulRequests.length > 0) {
+                    alert("도서 반납 성공!");
+                }
+
+                if (failedRequests.length > 0) {
+                    const errorMessages = new Set(failedRequests.map(result => result.reason.message));
+                    alert(`도서 반납 실패: ${[...errorMessages].join("\n")}`);
+                }
+            })
+            .catch(error => {
+                alert("도서 반납 실패: 서버 오류 발생!");
+            });
+    });
+
+
+</script>
 </body>
 </html>

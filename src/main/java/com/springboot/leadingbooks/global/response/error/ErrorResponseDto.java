@@ -1,17 +1,14 @@
 package com.springboot.leadingbooks.global.response.error;
 
-import com.springboot.leadingbooks.global.response.ApiResponse;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
-import java.time.LocalDateTime;
+import org.springframework.http.HttpStatus;
 
 @Getter
-@Setter
-public class ErrorResponseDto extends ApiResponse {
-    public ErrorResponseDto(CustomException e) {
-        super(LocalDateTime.now().toString(),
-                e.getErrorCode().getHttpStatus().toString(),
-                e.getErrorCode().getCode(),
-                e.getMessage());
-    }
+@AllArgsConstructor
+public class ErrorResponseDto {
+    private HttpStatus status;
+    private String code;
+    private String message;
 }

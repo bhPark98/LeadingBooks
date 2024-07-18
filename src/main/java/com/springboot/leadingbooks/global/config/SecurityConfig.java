@@ -51,7 +51,7 @@ public class SecurityConfig {
         http.authorizeHttpRequests(authorize -> authorize
                 .requestMatchers(AUTH_WHITELIST).permitAll()
 
-                .anyRequest().authenticated());
+                .anyRequest().permitAll());
 
         return http.build();
     }
