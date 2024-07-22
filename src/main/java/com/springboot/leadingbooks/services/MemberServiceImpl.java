@@ -134,9 +134,9 @@ public class MemberServiceImpl implements MemberService {
                 .toList();
 
         return MyPageResponseDto.builder()
-                .mName(mName)
-                .mNickname(mNickname)
-                .mEmail(mEmail)
+                .name(mName)
+                .nickname(mNickname)
+                .email(mEmail)
                 .booksInfo(borrowedBooks)
                 .build();
     }
@@ -194,7 +194,7 @@ public class MemberServiceImpl implements MemberService {
             throw new CustomException(ErrorCode.NOT_MATCHES_AUTHCODE);
         }
     }
-    // 토큰으로 우저정보 반환
+    // 토큰으로 유저정보 반환
     public Member getMemberByUsername(String username) {
         Long mId = Long.parseLong(username);
         return memberRepository.findById(mId).orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_MEMBER));

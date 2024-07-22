@@ -1,5 +1,6 @@
 package com.springboot.leadingbooks.controller;
 
+import com.springboot.leadingbooks.controller.dto.request.ChangeNicknameRequestDto;
 import com.springboot.leadingbooks.controller.dto.request.DeleteUserRequestDto;
 import com.springboot.leadingbooks.controller.dto.request.MemberRequestDto;
 import com.springboot.leadingbooks.controller.dto.response.JwtTokenResponseDto;
@@ -122,8 +123,10 @@ public class MemberController {
     }
     // 닉네임 변경
     @PutMapping("/changeNickname/{mId}")
-    public void changeNickname(@PathVariable Long mId, @RequestBody String mNickname) {
-        memberService.changeNickname(mId, mNickname);
+    public ResponseEntity<?> changeNickname(@PathVariable Long mId, @RequestBody ChangeNicknameRequestDto dto) {
+        log.info("mNickname = {}", dto.getNewNickname());
+        memberService.changeNickname(mId, dto.getNewNickname());
+        return ResponseEntity.ok(HttpStatus.OK);
     }
 
     // 이메일 전송

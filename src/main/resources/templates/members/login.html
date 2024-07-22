@@ -5,9 +5,6 @@
 </head>
 <body>
 <h1>로그인</h1>
-<div th:if="${global}">
-    <p th:text="${global}"></p>
-</div>
 <div class="frmSignIn">
 <form th:action="@{/api/v1/sign/in}" method="post" th:object="${loginRequestDto}">
     <div class="form-group">
@@ -23,8 +20,9 @@
     </div>
 
     <div>
-        <button type="submit">로그인</button>
+        <button type="submit" id="loginButton">로그인</button>
     </div>
+
 
 </form>
 </div>

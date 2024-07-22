@@ -3,16 +3,17 @@ package com.springboot.leadingbooks.services.dto.response;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.Getter;
 
 import java.util.List;
 
 @Builder
-@Data
+@Getter
 @AllArgsConstructor
 public class MyPageResponseDto {
-    private String mName;
-    private String mNickname;
-    private String mEmail;
+    private String name;
+    private String nickname;
+    private String email;
     private List<BorrowedBookInfoDto> booksInfo;
 
 }
