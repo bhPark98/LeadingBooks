@@ -13,6 +13,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Collections;
 import java.util.List;
 
 @Controller
@@ -24,18 +26,11 @@ public class BookController {
 
     // 책 전체 조회
     @GetMapping("/all/books")
-    public String getAllBooks(@RequestParam(value = "page", defaultValue = "0") int page, @RequestParam(value = "size", defaultValue = "10") int size, Model model) {
-        log.info("Received request : page = {}, size = {}", page, size);
-        List<Book> books = bookService.getAllBooks(page, size);
-        Long totalBooks = bookService.getTotalBooks();
-        int totalPages = (int) Math.ceil((double) totalBooks / size);
-
+    public String getAllBooks(Model model) {
+        List<Book> books = bookService.getAllBooks();
         model.addAttribute("books", books);
-        model.addAttribute("page", page);
-        model.addAttribute("size", size);
-        model.addAttribute("totalPages", totalPages);
 
-        return "books/home";
+        return "/books/home2";
     }
 
 //    // 책 전체 조회
@@ -57,19 +52,27 @@ public class BookController {
 
     // 책 제목으로 검색
     @GetMapping("/search/title")
-    public FindBookResponseDto findBooksByTitle(@RequestParam String bName) {
-        return bookService.FindBookByTitle(bName);
+    @ResponseBody
+    public ResponseEntity<?> findBooksByTitle(@RequestParam String bName) {
+        log.info("bName = {}", bName);
+        FindBookResponseDto book = bookService.FindBookByTitle(bName);
+        return ResponseEntity.ok().body(Collections.singletonList(book));
     }
 
     // 책 작가로 검색
-    @GetMapping("search/writer")
-    public FindBookResponseDto findBooksByWriter(@RequestParam String bWriter) {
-        return bookService.FindBookByWriter(bWriter);
+    @GetMapping("/search/writer")
+    @ResponseBody
+    public ResponseEntity<?> findBooksByWriter(@RequestParam String bWriter) {
+        log.info("bWriter = {}", bWriter);
+        FindBookResponseDto book = bookService.FindBookByWriter(bWriter);
+        return ResponseEntity.ok().body(Collections.singletonList(book));
     }
 
     // 책 카테고리로 검색
-    @GetMapping("search/category")
-    public List<Book> findBooksByCategory(@RequestParam int pageNumber, @RequestParam int pageSize, @RequestParam Category bCategory) {
-        return bookService.FindBookByCategory(pageNumber, pageSize, bCategory);
+    @GetMapping("/search/category")
+    @ResponseBody
+    public ResponseEntity<?> findBooksByCategory(@RequestParam Category bCategory) {
+        List<Book> book = bookService.FindBookByCategory(bCategory);
+        return ResponseEntity.ok().body(book);
     }
 }

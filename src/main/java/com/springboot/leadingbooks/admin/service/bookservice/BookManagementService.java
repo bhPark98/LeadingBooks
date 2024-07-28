@@ -16,8 +16,8 @@ public class BookManagementService {
     private final BookRepository bookRepository;
 
     // 전체 책 조회
-    public List<Book> findAllBooks(int pageNumber, int pageSize) {
-        return bookRepository.findAllBooks(pageNumber, pageSize);
+    public List<Book> findAllBooks() {
+        return bookRepository.findAllBooks();
     }
     // 책 제목으로 찾기
     public Book findBookByName(String bName) {
@@ -34,8 +34,8 @@ public class BookManagementService {
         return book;
     }
     // 책 카테고리별로 조회
-    public List<Book> findBookByCategory(int pageNumber, int pageSize, Category bCategory) {
-        return bookRepository.findBookByCategory(pageNumber, pageSize, bCategory);
+    public List<Book> findBookByCategory(Category bCategory) {
+        return bookRepository.findBookByCategory(bCategory);
     }
     // 단일 책 삭제
     public void deleteBook(Long bId) {

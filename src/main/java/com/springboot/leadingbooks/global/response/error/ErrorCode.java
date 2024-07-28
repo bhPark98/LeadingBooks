@@ -9,7 +9,7 @@ public enum ErrorCode {
     NOT_FOUND_NAME(HttpStatus.NOT_FOUND, "NFN", "해당하는 제목의 책을 찾을 수 없습니다."),
     NOT_FOUND_WRITER(HttpStatus.NOT_FOUND, "NFW", "해당하는 작가의 책을 찾을 수 없습니다"),
     NOT_FOUND_CATEGORY(HttpStatus.NOT_FOUND, "NFC", "해당하는 카테고리의 책을 찾을 수 없습니다."),
-    NOT_FOUND_MEMBER(HttpStatus.NOT_FOUND, "NFM", "멤버정보를 찾을 수 없습니다."),
+    NOT_FOUND_MEMBER(HttpStatus.NOT_FOUND, "NFM", "회원정보를 찾을 수 없습니다."),
     NOT_FOUND_BOOK(HttpStatus.NOT_FOUND, "NFB", "해당 책을 찾을 수 없습니다."),
     NOT_FOUND_STOPPED(HttpStatus.NOT_FOUND, "NFS", "정지회원이 존재하지 않습니다."),
     NOT_COUNT_BOOK(HttpStatus.NOT_FOUND, "NCB", "대여 가능한 도서가 존재하지 않습니다."),

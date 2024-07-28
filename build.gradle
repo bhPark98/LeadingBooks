@@ -42,6 +42,8 @@ dependencies {
     implementation 'org.jetbrains:annotations:24.0.0'
 	// mail
 	implementation group: 'org.springframework.boot', name: 'spring-boot-starter-mail', version: '3.0.5'
+	//bootstrap
+	implementation group: 'org.webjars', name: 'bootstrap', version: '4.6.0'
 
 	compileOnly 'org.projectlombok:lombok'
 	runtimeOnly 'com.mysql:mysql-connector-j'

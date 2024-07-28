@@ -13,9 +13,9 @@ public interface BookService {
 
     public FindBookResponseDto FindBookByWriter(String bWriter);
 
-    public List<Book> FindBookByCategory(int pageNumber, int pageSize, Category bCategory);
+    public List<Book> FindBookByCategory(Category bCategory);
 
-    public List<Book> getAllBooks(int pageNumber, int pageSize);
+    public List<Book> getAllBooks();
 
     public Long getTotalBooks();
 }

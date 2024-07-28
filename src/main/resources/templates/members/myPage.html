@@ -35,8 +35,13 @@
 </div>
 
 <button id="changeNicknameBtn">닉네임변경</button>
+<button onclick="deleteUser()">회원 탈퇴</button>
 
 <script>
+    function deleteUser() {
+        window.location.href = "/api/v1/delete/user";
+    }
+
     document.getElementById("extendBookBtn").addEventListener("click", function () {
         const mId = document.querySelector(".mId").value;
         const checkBooks = document.querySelectorAll(".book-checkbox:checked");

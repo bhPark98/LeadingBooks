@@ -28,6 +28,8 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.http.HttpResponse;
+import java.util.HashMap;
+import java.util.Map;
 
 @Controller
 @RequiredArgsConstructor
@@ -41,7 +43,7 @@ public class MemberController {
     @GetMapping("/sign/up")
     public String createForm(Model model) {
         model.addAttribute("memberRequestDto", new MemberRequestDto());
-        return "members/createMemberForm";
+        return "members/register";
     }
 
     // 회원가입
@@ -65,19 +67,25 @@ public class MemberController {
     }
 
     // 로그인 페이지
-    @GetMapping("sign/in")
+    @GetMapping("/sign/in")
     public String signInForm(Model model) {
         model.addAttribute("loginRequestDto", new LoginRequestDto());
-        return "members/login";
+        return "members/login2";
     }
 
     // 로그인
-    @PostMapping("sign/in")
-    public String login(Model model, @Validated @ModelAttribute("loginRequestDto") LoginRequestDto loginRequestDto, BindingResult bindingResult, HttpServletResponse response) {
+    @PostMapping("/sign/in")
+    @ResponseBody
+    public ResponseEntity<?> login(Model model, @Validated @ModelAttribute("loginRequestDto") LoginRequestDto loginRequestDto, BindingResult result, HttpServletResponse response) {
         log.info("Received login request: {}", loginRequestDto);
 
-        if(bindingResult.hasErrors())
-            return "members/login";
+        if(result.hasErrors()) {
+            Map<String, String> errorMap = new HashMap<>();
+            result.getFieldErrors().forEach(error -> {
+                errorMap.put(error.getField(), error.getDefaultMessage());
+            });
+            return ResponseEntity.badRequest().body(errorMap); // 400 Bad Request와 함께 오류 메시지 반환
+        }
 
         String token = memberService.login(loginRequestDto);
         log.info("token = {}", token);
@@ -88,7 +96,7 @@ public class MemberController {
         accessTokenCookie.setPath("/");
         response.addCookie(accessTokenCookie);
 
-        return "redirect:/api/v1/all/books?page=0&size=10";
+        return ResponseEntity.ok(HttpStatus.OK);
     }
 
     // 로그아웃
@@ -103,12 +111,29 @@ public class MemberController {
         return "redirect:/api/v1/sign/in";
     }
 
+    // 회원탈퇴 페이지
+    @GetMapping("/delete/user")
+    public String deleteUser(Model model) {
+        model.addAttribute("dto", new DeleteUserRequestDto());
+        log.info("model = {}", model);
+        return "members/deleteMember";
+    }
+
     // 회원탈퇴
-    @DeleteMapping("delete/user")
-    public ResponseEntity<?> deleteUser(@RequestBody DeleteUserRequestDto dto) {
+    @PostMapping("/delete/user")
+    public ResponseEntity<?> deleteUser(@RequestHeader("X-HTTP-Method-Override") String httpMethodOverride, @RequestBody DeleteUserRequestDto dto, HttpServletResponse response) {
         log.info("Received deleteInfo request: {}", dto);
-        memberService.deleteMember(dto);
-        return ResponseEntity.ok(HttpStatus.OK);
+        if("DELETE".equals(httpMethodOverride)) {
+            memberService.deleteMember(dto);
+            Cookie cookie = new Cookie("access_token", null);
+            cookie.setPath("/");
+            cookie.setMaxAge(0);
+            response.addCookie(cookie);
+            return ResponseEntity.ok(HttpStatus.OK);
+        } else {
+            return ResponseEntity.badRequest().build();
+        }
+
     }
 
     // 내정보 확인
@@ -132,6 +157,7 @@ public class MemberController {
     // 이메일 전송
     @PostMapping("emails/verification-requests")
     public ResponseEntity<?> sendMessage(@RequestParam("email") @Valid String email) {
+        log.info("email = {}", email);
         memberService.sendCodeToEmail(email);
         return ResponseEntity.ok(HttpStatus.OK);
     }

@@ -70,14 +70,14 @@ public class BookServiceImpl implements BookService {
         return FindBookResponseDto.of(book);
     }
     // 책 카테고리로 책 리스트 조회하기
-    public List<Book> FindBookByCategory(int pageNumber, int pageSize, Category bCategory) {
+    public List<Book> FindBookByCategory(Category bCategory) {
 
-        return bookRepository.findBookByCategory(pageNumber, pageSize, bCategory);
+        return bookRepository.findBookByCategory(bCategory);
     }
 
     // 책 전체 조회
-    public List<Book> getAllBooks(int pageNumber, int pageSize) {
-        return bookRepository.findAllBooks(pageNumber, pageSize);
+    public List<Book> getAllBooks() {
+        return bookRepository.findAllBooks();
     }
 
     // 책 전체 개수 로직

@@ -44,18 +44,14 @@ public class BookRepository {
                 .getResultStream().findAny();
     }
 
-    public List<Book> findBookByCategory(int pageNumber, int pageSize, Category bCategory) {   // 책 카테고리로 찾기
-        return em.createQuery("select b from Book b where b.bCategory =: bCategory", Book.class)
+    public List<Book> findBookByCategory(Category bCategory) {   // 책 카테고리로 찾기
+        return em.createQuery("select b from Book b where b.bCategory =:bCategory", Book.class)
                 .setParameter("bCategory", bCategory)
-                .setFirstResult(pageNumber * pageSize)
-                .setMaxResults(pageSize)
                 .getResultList();
     }
 
-    public List<Book> findAllBooks(int pageNumber, int pageSize) {  // 전체 도서 조회
+    public List<Book> findAllBooks() {  // 전체 도서 조회
         return em.createQuery("select b from Book b", Book.class)
-                .setFirstResult(pageNumber * pageSize)
-                .setMaxResults(pageSize)
                 .getResultList();
     }
 
@@ -68,7 +64,7 @@ public class BookRepository {
     }
 
     public Optional<Long> countBooks() {
-        return em.createQuery("select count(*) from Book b")
+        return em.createQuery("select count(*) from Book b", Long.class)
                 .getResultStream().findAny();
     }
 }
