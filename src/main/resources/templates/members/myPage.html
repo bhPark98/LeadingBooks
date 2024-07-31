@@ -1,189 +1,196 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
+
 <head>
-    <meta charset="UTF-8">
-    <title>내정보</title>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>마이페이지</title>
+
+    <!-- Custom fonts for this template-->
+    <link href="/bootstrap/vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
+    <link
+        href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
+        rel="stylesheet">
+
+    <!-- Custom styles for this template-->
+    <link href="/bootstrap/css/sb-admin-2.min.css" rel="stylesheet">
+
 </head>
-<body>
-<h1>내정보</h1>
-<div>
-    <p>이름: <span th:text="${myPageResponseDto.getName()}"></span></p>
-    <p>닉네임: <span th:text="${myPageResponseDto.getNickname()}"></span></p>
-    <p>이메일: <span th:text="${myPageResponseDto.getEmail()}"></span></p>
-</div>
 
-<h2>대출한 책 목록</h2>
-<ul>
-    <li th:each="book : ${myPageResponseDto.getBooksInfo()}">
-        <label>
-            <input type="checkbox" class="book-checkbox" th:value="${book.getBId()}">
-        </label>
-        <span th:text="${book.getBName()}"></span> - <span th:text="${book.getCDate()}"></span>
-    </li>
-</ul>
-<div>
-    <form action="@{/api/v1/extend/books}">
-        <button type="button" id="extendBookBtn">도서 연장</button>
-        <input type="hidden" th:value="${mId}" class="mId">
-    </form>
-</div>
-<div>
-    <form action="@{/api/v1/return/books}">
-        <button type="button" id="returnBookBtn">도서 반납</button>
-        <input type="hidden" th:value="${mId}" class="mId">
-    </form>
-</div>
+<body id="page-top">
 
-<button id="changeNicknameBtn">닉네임변경</button>
-<button onclick="deleteUser()">회원 탈퇴</button>
+    <!-- Page Wrapper -->
+    <div id="wrapper">
 
-<script>
-    function deleteUser() {
-        window.location.href = "/api/v1/delete/user";
-    }
+        <!-- Sidebar -->
+        <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
 
-    document.getElementById("extendBookBtn").addEventListener("click", function () {
-        const mId = document.querySelector(".mId").value;
-        const checkBooks = document.querySelectorAll(".book-checkbox:checked");
+            <!-- Sidebar - Brand -->
+            <a class="sidebar-brand d-flex align-items-center justify-content-center" href="/api/v1/all/books">
+                <div class="sidebar-brand-icon rotate-n-15">
+                    <i class="fas fa-laugh-wink"></i>
+                </div>
+                <div class="sidebar-brand-text mx-3">LEADINGBOOKS</div>
+            </a>
 
-        if (checkBooks.length === 0) {
-            alert("연장할 책을 선택하세요.");
-            return;
-        }
+        </ul>
+        <!-- End of Sidebar -->
 
-        const bookIds = Array.from(checkBooks).map(checkBook => checkBook.value);
+        <!-- Content Wrapper -->
+        <div id="content-wrapper" class="d-flex flex-column">
 
-        const requests = bookIds.map(bId => {
-            return fetch(`/api/v1/extend/books?mId=${mId}&bId=${bId}`, {
-                method: "PUT"
-            })
-                .then(response => response.json().then(data => ({response, data})))
-                .then(({response, data}) => {
-                    console.log(response, data);
-                    if(!response.ok) {
-                        throw new Error(data.message || "연장 실패!");
-                    }
-                    if(response.status === 208) {
-                        throw new Error(data.message || "이미 한 번 연장한 도서입니다. 연장할 수 없습니다.");
-                    }
-                    return { status: "fulfilled", data};
-                })
-                .catch(error => ({ status : "rejected", reason: error}));
-        });
+            <!-- Main Content -->
+            <div id="content">
 
-        Promise.allSettled(requests)
-            .then(results => {
-                console.log(results);
-                const failedRequests = results.filter(result => result.status === 'rejected');
-                const successfulRequests = results.filter(result => result.status === 'fulfilled');
+                <!-- Topbar -->
+                <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
 
-                if (successfulRequests.length > 0) {
-                    alert("도서 대여 연장 성공!");
-                }
+                    <!-- Topbar Navbar -->
+                    <ul class="navbar-nav ml-auto">
 
-                if (failedRequests.length > 0) {
-                    const errorMessages = new Set(failedRequests.map(result => result.reason.message));
-                    alert(`도서 연장 실패: ${[...errorMessages].join("\n")}`);
-                }
-            })
-            .catch(error => {
-                alert("도서 연장 실패: 서버 오류 발생!");
-            });
-    });
+                        <div class="topbar-divider d-none d-sm-block"></div>
 
-    document.getElementById("returnBookBtn").addEventListener("click", function () {
-        const mId = document.querySelector(".mId").value;
-        const checkBooks = document.querySelectorAll(".book-checkbox:checked");
+                        <!-- Nav Item - User Information -->
+                        <li class="nav-item dropdown no-arrow">
+                            <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
+                               data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <span class="mr-2 d-none d-lg-inline text-gray-600 small">내정보</span>
+                                <img class="img-profile rounded-circle"
+                                     src="/bootstrap/img/undraw_profile.svg">
+                            </a>
+                            <!-- Dropdown - User Information -->
+                            <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in"
+                                 aria-labelledby="userDropdown">
+                                <a class="dropdown-item" id="myPageLink">
+                                    <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
+                                    마이페이지
+                                </a>
+                                <a class="dropdown-item" href="/api/v1/logout" data-toggle="modal" data-target="#logoutModal">
+                                    <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
+                                    로그아웃
+                                </a>
+                            </div>
+                        </li>
 
-        if (checkBooks.length === 0) {
-            alert("반납할 책을 선택하세요.");
-            return;
-        }
+                    </ul>
 
-        const bookIds = Array.from(checkBooks).map(checkBook => checkBook.value);
+                </nav>
+                <!-- End of Topbar -->
 
-        const requests = bookIds.map(bId => {
-            return fetch(`/api/v1/return/books?mId=${mId}&bId=${bId}`, {
-                method: "DELETE"
-            })
-                .then(response => {
-                    if (!response.ok) {
-                        return response.json().then(data => {
-                            throw new Error(data.message || "반납 실패");
-                        });
-                    }
-                    return response.json().then(data => ({ status: "fulfilled", data }));
-                })
-                .catch(error => ({ status: "rejected", reason: error }));
-        });
+                <!-- Begin Page Content -->
+                <div class="container-fluid">
 
-        Promise.allSettled(requests)
-            .then(results => {
-                console.log(results);
-                const failedRequests = results.filter(result => result.status === 'rejected');
-                const successfulRequests = results.filter(result => result.status === 'fulfilled');
+                    <h1>내정보</h1>
+                    <hr class="sidebar-divider">
+                    <div>
+                        <p>이름: <span th:text="${myPageResponseDto.getName()}"></span></p>
+                        <p>닉네임: <span th:text="${myPageResponseDto.getNickname()}"></span></p>
+                        <p>이메일: <span th:text="${myPageResponseDto.getEmail()}"></span></p>
+                    </div>
+                    <hr class="sidebar-divider">
+                    <h2>대출한 책 목록</h2>
+                    <ul>
+                        <li th:each="book : ${myPageResponseDto.getBooksInfo()}">
+                            <label>
+                                <input type="checkbox" class="book-checkbox" th:value="${book.getBId()}">
+                            </label>
+                            <span th:text="${book.getBName()}"></span> - <span th:text="${book.getCDate()}"></span>일
+                        </li>
+                    </ul>
 
-                if (successfulRequests.length > 0) {
-                    alert("도서 반납 성공!");
-                }
 
-                if (failedRequests.length > 0) {
-                    const errorMessages = new Set(failedRequests.map(result => result.reason.message));
-                    alert(`도서 반납 실패: ${[...errorMessages].join("\n")}`);
-                }
-            })
-            .catch(error => {
-                alert("도서 반납 실패: 서버 오류 발생!");
-            });
-    });
+                </div>
+                <!-- /.container-fluid -->
 
-    document.getElementById("changeNicknameBtn").addEventListener("click", function () {
-        const mId = document.querySelector(".mId").value;
+            </div>
+            <!-- End of Main Content -->
+            <div class="my-2"></div>
+            <a href="#" class="btn btn-primary btn-icon-split">
+                                        <span class="icon text-white-50">
+                                            <i class="fas fa-flag"></i>
+                                        </span>
+                <span class="text" id="extendBookBtn">도서연장</span>
+                <input type="hidden" th:value="${mId}" class="mId">
+            </a>
+            <div class="my-2"></div>
+            <a href="#" class="btn btn-success btn-icon-split">
+                                        <span class="icon text-white-50">
+                                            <i class="fas fa-check"></i>
+                                        </span>
+                <span class="text" id="returnBookBtn">도서반납</span>
+            </a>
+            <div class="my-2"></div>
+            <a href="#" class="btn btn-info btn-icon-split">
+                                        <span class="icon text-white-50">
+                                            <i class="fas fa-info-circle"></i>
+                                        </span>
+                <span class="text" id="changeNicknameBtn">닉네임변경</span>
+            </a>
+            <div class="my-2"></div>
+            <a href="/api/v1/delete/user" class="btn btn-warning btn-icon-split">
+                                        <span class="icon text-white-50">
+                                            <i class="fas fa-exclamation-triangle"></i>
+                                        </span>
+                <span class="text">회원탈퇴</span>
+            </a>
 
-        const nicknameInput = document.createElement("input");
-        nicknameInput.type = "text";
-        nicknameInput.placeholder = "수정할 닉네임";
-        nicknameInput.classList.add("new-nickname");
+            <!-- Footer -->
+            <footer class="sticky-footer bg-white">
+                <div class="container my-auto">
+                    <div class="copyright text-center my-auto">
+                        <span>Copyright &copy; LeadingBooks 2024</span>
+                    </div>
+                </div>
+            </footer>
+            <!-- End of Footer -->
 
-        const changeNicknameBtn = document.createElement("button");
-        changeNicknameBtn.textContent = "변경";
-        changeNicknameBtn.classList.add("change-nickname-btn");
+        </div>
+        <!-- End of Content Wrapper -->
 
-        this.parentNode.appendChild(nicknameInput);
-        this.parentNode.appendChild(changeNicknameBtn);
+    </div>
+    <!-- End of Page Wrapper -->
 
-        changeNicknameBtn.addEventListener("click", function () {
-            const newNickname = nicknameInput.value;
-            console.log(newNickname);
+    <!-- Scroll to Top Button-->
+    <a class="scroll-to-top rounded" href="#page-top">
+        <i class="fas fa-angle-up"></i>
+    </a>
 
-            if(!newNickname) {
-                alert("새로운 닉네임을 입력해주세요.");
-                return;
-            }
+    <!-- Logout Modal-->
+    <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">정말 로그아웃하시겠습니까?</h5>
+                    <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <div class="modal-body">로그아웃을 원하시면 밑에 로그아웃 버튼을 눌러주세요.</div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" type="button" data-dismiss="modal">취소</button>
+                    <a class="btn btn-primary" href="/api/v1/logout">로그아웃</a>
+                </div>
+            </div>
+        </div>
+    </div>
 
-            fetch(`/api/v1/changeNickname/${mId}`, {
-                method: "PUT",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({ "newNickname": newNickname})
-            })
-                .then(response => {
-                    if(response.ok) {
-                        alert("닉네임이 변경되었습니다.");
-                        location.reload();
-                    } else {
-                        return response.json().then(data => {
-                            alert(`닉네임 변경 실패: ${data.message}`);
-                        });
-                    }
-                })
-                .catch(error => {
-                    alert("닉네임 변경 중 오류가 발생했습니다.");
-                });
-        });
-    });
+    <!-- Bootstrap core JavaScript-->
+    <script src="/bootstrap/vendor/jquery/jquery.min.js"></script>
+    <script src="/bootstrap/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
 
-</script>
+    <!-- Core plugin JavaScript-->
+    <script src="/bootstrap/vendor/jquery-easing/jquery.easing.min.js"></script>
+
+    <!-- Custom scripts for all pages-->
+    <script src="/bootstrap/js/sb-admin-2.min.js"></script>
+
+    <script src="/book/myPage2.js"></script>
 </body>
+
 </html>

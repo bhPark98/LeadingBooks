@@ -10,6 +10,7 @@ import com.springboot.leadingbooks.global.response.error.CustomException;
 import com.springboot.leadingbooks.global.response.error.ErrorCode;
 import com.springboot.leadingbooks.services.dto.request.CustomUserInfoDto;
 import com.springboot.leadingbooks.controller.dto.request.LoginRequestDto;
+import com.springboot.leadingbooks.services.dto.request.FindPwdRequestDto;
 import com.springboot.leadingbooks.services.dto.response.BorrowedBookInfoDto;
 import com.springboot.leadingbooks.services.dto.response.MyPageResponseDto;
 import com.springboot.leadingbooks.util.token.JwtUtil;
@@ -163,6 +164,14 @@ public class MemberServiceImpl implements MemberService {
         authCode = this.createCode();
         mailService.sendEmail(toEmail, title, authCode);
     }
+
+    // 비밀번호 찾기 링크 요청
+    public void sendPwdLinkToEmail(String toEmail) {
+        String title = "leadingbooks 비밀번호 찾기 링크";
+        String link = "localhost:8080/api/v1/find/pwd";
+        mailService.sendEmail(toEmail, title, link);
+    }
+
     // 인증번호 생성
     private String createCode() {
         int length = 6;
@@ -200,4 +209,24 @@ public class MemberServiceImpl implements MemberService {
         return memberRepository.findById(mId).orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_MEMBER));
     }
 
+    // 비밀번호 찾기
+    @Transactional
+    public void findMemberPwd(FindPwdRequestDto findPwdRequestDto) {
+        String email = findPwdRequestDto.getEmail();
+        Member member = memberRepository.findMemberByEmail(email).orElseThrow(
+                () -> new CustomException(ErrorCode.NOT_FOUND_EMAIL)
+        );
+        String encodedPassword = "";
+        String pwd = findPwdRequestDto.getPwd();
+        String rePwd = findPwdRequestDto.getRePwd();
+        if(pwd.equals(rePwd)) {
+            encodedPassword = passwordEncoder.encode(pwd);
+        }
+        else {
+            throw new CustomException(ErrorCode.NOT_MATCHES_PASSWORD);
+        }
+
+        member.changePassword(encodedPassword);
+        memberRepository.update(member);
+    }
 }

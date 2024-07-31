@@ -17,5 +17,5 @@ public interface BookService {
 
     public List<Book> getAllBooks();
 
-    public Long getTotalBooks();
+    public Long getTotalBooks(Long bId);
 }

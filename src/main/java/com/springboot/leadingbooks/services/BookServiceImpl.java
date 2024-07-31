@@ -14,7 +14,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import javax.swing.text.html.Option;
 import java.util.List;
 import java.util.Optional;
 
@@ -81,8 +80,8 @@ public class BookServiceImpl implements BookService {
     }
 
     // 책 전체 개수 로직
-    public Long getTotalBooks() {
-        Optional<Long> optionalLong = bookRepository.countBooks();
+    public Long getTotalBooks(Long bId) {
+        Optional<Long> optionalLong = bookRepository.countBooks(bId);
 
         return optionalLong.orElse(0L);
     }

@@ -1,5 +1,6 @@
 package com.springboot.leadingbooks.controller;
 
+import com.springboot.leadingbooks.services.BookService;
 import com.springboot.leadingbooks.services.ReviewService;
 import com.springboot.leadingbooks.services.dto.request.ReviewCreateRequestDto;
 import com.springboot.leadingbooks.services.dto.response.BookReviewResponseDto;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("api/v1")
 public class ReviewController {
     private final ReviewService reviewService;
+    private final BookService bookService;
 
     // 리뷰 작성
     @PostMapping("/write/reviews")
@@ -29,7 +31,11 @@ public class ReviewController {
     @GetMapping("/detail/reviews")
     public String detailReviews(@RequestParam(value = "bId") Long bId, Model model) {
         BookReviewResponseDto bookDetail = reviewService.getBookDetail(bId);
+        Long bookCount = bookService.getTotalBooks(bId);
+
         model.addAttribute("bookDetail", bookDetail);
+        model.addAttribute("bookCount", bookCount);
+
         return "books/detail";
     }
 }

@@ -23,10 +23,10 @@ public class CheckOutController {
     }
     // 대출 기한 연장
     @PutMapping("/extend/books")
-    public void extendBooks(@RequestParam("mId")Long mId, @RequestParam("bId")Long bId) {
+    public ResponseEntity<?> extendBooks(@RequestParam("mId")Long mId, @RequestParam("bId")Long bId) {
         checkOutService.extendDates(mId, bId);
         log.info("mId = {}, bId = {}", mId, bId);
-
+        return ResponseEntity.ok(HttpStatus.OK);
     }
 
     // 도서 반납

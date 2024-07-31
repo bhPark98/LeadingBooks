@@ -4,6 +4,7 @@ import com.springboot.leadingbooks.controller.dto.request.DeleteUserRequestDto;
 import com.springboot.leadingbooks.controller.dto.request.LoginRequestDto;
 import com.springboot.leadingbooks.controller.dto.request.MemberRequestDto;
 import com.springboot.leadingbooks.domain.entity.Member;
+import com.springboot.leadingbooks.services.dto.request.FindPwdRequestDto;
 import com.springboot.leadingbooks.services.dto.response.MyPageResponseDto;
 
 public interface MemberService {
@@ -23,4 +24,8 @@ public interface MemberService {
     public void verifiedCode(String email, String authCode);
 
     public Member getMemberByUsername(String username);
+
+    public void sendPwdLinkToEmail(String toEmail);
+
+    public void findMemberPwd(FindPwdRequestDto findPwdRequestDto);
 }

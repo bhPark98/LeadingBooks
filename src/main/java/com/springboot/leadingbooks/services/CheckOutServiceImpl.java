@@ -113,6 +113,12 @@ public class CheckOutServiceImpl implements CheckOutService {
         CheckOut checkOut = checkOutRepository.findByMemberAndBookId(mId, bId).orElseThrow(
                 () -> new CustomException(ErrorCode.NOT_FOUND_BORROWED_INFO)
         );
+        Book book = bookRepository.findBookById(bId).orElseThrow(
+                () -> new CustomException(ErrorCode.NOT_FOUND_BOOK)
+        );
+
+        book.increaseBookCount();
+        bookRepository.update(book);
 
         checkOutRepository.delete(checkOut);
 

@@ -20,6 +20,14 @@
     <!-- Custom styles for this template-->
     <link href="/bootstrap/css/sb-admin-2.min.css" rel="stylesheet">
 
+    <style>
+        .error {
+            color: red;
+            font-size: 0.8rem;
+            margin-top: 0.25rem;
+            display: block;
+        }
+    </style>
 </head>
 
 <body class="bg-gradient-primary">
@@ -41,10 +49,12 @@
                                     <div class="col-sm-6 mb-3 mb-sm-0">
                                         <input type="text" th:field="*{name}" class="form-control form-control-user" id="name"
                                             placeholder="이름">
+                                        <span class="error" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></span>
                                     </div>
                                     <div class="col-sm-6">
                                         <input type="text" th:field="*{nickname}" class="form-control form-control-user" id="nickname"
                                             placeholder="닉네임">
+                                        <span class="error" th:if="${#fields.hasErrors('nickname')}" th:errors="*{nickname}"></span>
                                     </div>
                                 </div>
                                 <div class="form-group">
@@ -64,10 +74,12 @@
                                     <div class="col-sm-6 mb-3 mb-sm-0">
                                         <input type="password" th:field="*{pwd}" class="form-control form-control-user"
                                             id="pwd" placeholder="비밀번호">
+                                        <span class="error" th:if="${#fields.hasErrors('pwd')}" th:errors="*{pwd}"></span>
                                     </div>
                                     <div class="col-sm-6">
                                         <input type="password" th:field="*{rePwd}" class="form-control form-control-user"
                                             id="rePwd" placeholder="비밀번호확인">
+                                        <span class="error" th:if="${#fields.hasErrors('rePwd')}" th:errors="*{rePwd}"></span>
                                     </div>
                                 </div>
                                 <div id="signUpButtonContainer" style="display: block">
@@ -77,19 +89,14 @@
                                 </div>
 
                                 <hr>
-<!--                                <a href="index.html" class="btn btn-google btn-user btn-block">-->
-<!--                                    <i class="fab fa-google fa-fw"></i> Register with Google-->
-<!--                                </a>-->
-<!--                                <a href="index.html" class="btn btn-facebook btn-user btn-block">-->
-<!--                                    <i class="fab fa-facebook-f fa-fw"></i> Register with Facebook-->
-<!--                                </a>-->
+
                             </form>
                             <hr>
                             <div class="text-center">
-                                <a class="small" href="forgot-password.html">Forgot Password?</a>
+                                <a class="small" href="/api/v1/reset/pwd">비밀번호를 잊으셨나요?</a>
                             </div>
                             <div class="text-center">
-                                <a class="small" href="login.html">Already have an account? Login!</a>
+                                <a class="small" href="/api/v1/sign/in">이미 계정이 있으신가요?</a>
                             </div>
                         </div>
                     </div>

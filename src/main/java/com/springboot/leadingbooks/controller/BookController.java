@@ -30,7 +30,7 @@ public class BookController {
         List<Book> books = bookService.getAllBooks();
         model.addAttribute("books", books);
 
-        return "/books/home2";
+        return "/books/home";
     }
 
 //    // 책 전체 조회
@@ -58,6 +58,7 @@ public class BookController {
         FindBookResponseDto book = bookService.FindBookByTitle(bName);
         return ResponseEntity.ok().body(Collections.singletonList(book));
     }
+
 
     // 책 작가로 검색
     @GetMapping("/search/writer")

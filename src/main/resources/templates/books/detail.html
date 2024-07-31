@@ -1,122 +1,200 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
-    <head>
-        <meta charset="UTF-8">
-        <title>책 세부 정보</title>
-    </head>
-    <body>
-    <h1>책 세부 정보</h1>
-    <div>
-        <h2>책 이름: <span th:text="${bookDetail.getBName()}"></span></h2>
-        <p>저자: <span th:text="${bookDetail.getBWriter()}"></span></p>
-        <p>출판사: <span th:text="${bookDetail.getBPublish()}"></span></p>
-        <p>카테고리: <span th:text="${bookDetail.getBCategory()}"></span></p>
-    </div>
 
-    <h2>리뷰</h2>
-    <div th:if="${#lists.isEmpty(bookDetail.getReview())}">
-        <p>리뷰가 없습니다.</p>
-    </div>
-    <div th:unless="${#lists.isEmpty(bookDetail.getReview())}">
-        <ul id="reviewList">
-            <li th:each="review : ${bookDetail.getReview()}">
-                <p>닉네임: <span th:text="${review.getMNickname()}"></span></p>
-                <p>내용: <span th:text="${review.getRContent()}"></span></p>
-                <p>별점: <span th:text="${review.getRRating()}"></span></p>
-            </li>
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>도서 세부 정보</title>
+
+    <!-- Custom fonts for this template-->
+    <link href="/bootstrap/vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
+    <link
+        href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
+        rel="stylesheet">
+
+    <!-- Custom styles for this template-->
+    <link href="/bootstrap/css/sb-admin-2.min.css" rel="stylesheet">
+
+</head>
+
+<body id="page-top">
+
+    <!-- Page Wrapper -->
+    <div id="wrapper">
+
+        <!-- Sidebar -->
+        <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
+
+            <!-- Sidebar - Brand -->
+            <a class="sidebar-brand d-flex align-items-center justify-content-center" href="/api/v1/all/books">
+                <div class="sidebar-brand-icon rotate-n-15">
+                    <i class="fas fa-laugh-wink"></i>
+                </div>
+                <div class="sidebar-brand-text mx-3">LEADINGBOOKS</div>
+            </a>
+
         </ul>
+        <!-- End of Sidebar -->
+
+        <!-- Content Wrapper -->
+        <div id="content-wrapper" class="d-flex flex-column">
+
+            <!-- Main Content -->
+            <div id="content">
+
+                <!-- Topbar -->
+                <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
+
+                    <!-- Topbar Navbar -->
+                    <ul class="navbar-nav ml-auto">
+
+                        <div class="topbar-divider d-none d-sm-block"></div>
+
+                        <!-- Nav Item - User Information -->
+                        <li class="nav-item dropdown no-arrow">
+                            <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
+                               data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <span class="mr-2 d-none d-lg-inline text-gray-600 small">내정보</span>
+                                <img class="img-profile rounded-circle"
+                                     src="/bootstrap/img/undraw_profile.svg">
+                            </a>
+                            <!-- Dropdown - User Information -->
+                            <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in"
+                                 aria-labelledby="userDropdown">
+                                <a class="dropdown-item" id="myPageLink">
+                                    <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
+                                    마이페이지
+                                </a>
+                                <a class="dropdown-item" href="/api/v1/logout" data-toggle="modal" data-target="#logoutModal">
+                                    <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
+                                    로그아웃
+                                </a>
+                            </div>
+                        </li>
+
+                    </ul>
+
+                </nav>
+                <!-- End of Topbar -->
+
+                <!-- Begin Page Content -->
+                <div class="container-fluid">
+
+                    <h1>책 세부 정보</h1>
+                    <p>남은 도서: <span th:text="${bookCount}"></span> </p>
+                    <hr class="sidebar-divider">
+                    <div>
+                        <h2>책 이름: <span th:text="${bookDetail.getBName()}"></span></h2>
+                        <hr class="sidebar-divider">
+                        <p>저자: <span th:text="${bookDetail.getBWriter()}"></span></p>
+                        <p>출판사: <span th:text="${bookDetail.getBPublish()}"></span></p>
+                        <p>카테고리: <span th:text="${bookDetail.getBCategory()}"></span></p>
+                    </div>
+
+                    <hr class="sidebar-divider">
+                    <h2>리뷰</h2>
+                    <div th:if="${#lists.isEmpty(bookDetail.getReview())}">
+                        <p>리뷰가 없습니다.</p>
+                    </div>
+                    <div th:unless="${#lists.isEmpty(bookDetail.getReview())}">
+                        <ul id="reviewList">
+                            <li th:each="review : ${bookDetail.getReview()}">
+                                <p>닉네임: <span th:text="${review.getMNickname()}"></span></p>
+                                <p>내용: <span th:text="${review.getRContent()}"></span></p>
+                                <p>별점: <span th:text="${review.getRRating()}"></span></p>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="my-2"></div>
+                    <a href="#" class="btn btn-light btn-icon-split">
+                                        <span class="icon text-gray-600">
+                                            <i class="fas fa-arrow-right"></i>
+                                        </span>
+                        <span class="text" id="writeReviewBtn">리뷰작성</span>
+                    </a>
+                    <div id="reviewForm" style="display: none;">
+                        <h3>리뷰 작성</h3>
+                        <form id="reviewSubmitForm">
+                            <input type="hidden" id="bId" th:value="${bookDetail.getBId()}">
+                            <input type="hidden" id="mId">
+                            <label for="rRating">평점:</label>
+                            <input type="number" id="rRating" name="rRating" min="1" max="5" required><br>
+                            <label for="rContent">내용:</label>
+                            <textarea id="rContent" name="rContent" required></textarea><br>
+                            <button type="submit">리뷰 제출</button>
+                        </form>
+                    </div>
+                    <div class="my-2"></div>
+                    <a href="#" class="btn btn-info btn-icon-split">
+                                        <span class="icon text-white-50">
+                                            <i class="fas fa-info-circle"></i>
+                                        </span>
+                        <span class="text" id="borrowBookBtn">도서대여</span>
+                    </a>
+
+                </div>
+                <!-- /.container-fluid -->
+
+            </div>
+            <!-- End of Main Content -->
+
+            <!-- Footer -->
+            <footer class="sticky-footer bg-white">
+                <div class="container my-auto">
+                    <div class="copyright text-center my-auto">
+                        <span>Copyright &copy; LeadingBooks 2024</span>
+                    </div>
+                </div>
+            </footer>
+            <!-- End of Footer -->
+
+        </div>
+        <!-- End of Content Wrapper -->
+
+    </div>
+    <!-- End of Page Wrapper -->
+
+    <!-- Scroll to Top Button-->
+    <a class="scroll-to-top rounded" href="#page-top">
+        <i class="fas fa-angle-up"></i>
+    </a>
+
+    <!-- Logout Modal-->
+    <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">정말 로그아웃하시겠습니까?</h5>
+                    <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <div class="modal-body">로그아웃을 원하시면 밑에 로그아웃 버튼을 눌러주세요.</div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" type="button" data-dismiss="modal">취소</button>
+                    <a class="btn btn-primary" href="/api/v1/logout">로그아웃</a>
+                </div>
+            </div>
+        </div>
     </div>
 
-    <button id="writeReviewBtn">리뷰 작성</button>
-    <button id="borrowBookBtn">도서 대여</button>
+    <!-- Bootstrap core JavaScript-->
+    <script src="/bootstrap/vendor/jquery/jquery.min.js"></script>
+    <script src="/bootstrap/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
 
-    <div id="reviewForm" style="display: none;">
-        <h3>리뷰 작성</h3>
-        <form id="reviewSubmitForm">
-            <input type="hidden" id="bId" th:value="${bookDetail.getBId()}">
-            <input type="hidden" id="mId">
-            <label for="rRating">평점:</label>
-            <input type="number" id="rRating" name="rRating" min="1" max="5" required><br>
-            <label for="rContent">내용:</label>
-            <textarea id="rContent" name="rContent" required></textarea><br>
-            <button type="submit">리뷰 제출</button>
-        </form>
-    </div>
+    <!-- Core plugin JavaScript-->
+    <script src="/bootstrap/vendor/jquery-easing/jquery.easing.min.js"></script>
 
-    <script>
-        document.getElementById("writeReviewBtn").addEventListener("click", function () {
-            document.getElementById("reviewForm").style.display="block";
-        });
+    <!-- Custom scripts for all pages-->
+    <script src="/bootstrap/js/sb-admin-2.min.js"></script>
 
-        document.getElementById("reviewSubmitForm").addEventListener("submit", function (event) {
-            event.preventDefault();
-            const reviewData = {
-                bId: document.getElementById("bId").value,
-                mId: document.getElementById("mId").value,
-                rRating: document.getElementById("rRating").value,
-                rContent: document.getElementById("rContent").value
-            };
+    <script src="/book/blank.js"></script>
+</body>
 
-            fetch("/api/v1/write/reviews", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify(reviewData)
-            })
-                .then(response => response.json())
-                .then(data => {
-                    const reviewList = document.getElementById("reviewList");
-                    const newReview = document.createElement("li");
-                    newReview.innerHTML = `<p>닉네임: ${data.mNickname}</p><p>내용: ${data.rContent}</p><p>별점: ${data.rRating}</p>`;
-                    reviewList.appendChild(newReview);
-                    document.getElementById("reviewForm").style.display="none";
-                    document.getElementById("reviewSubmitForm").reset();
-                })
-                .catch(error => console.error("Error:", error));
-        });
-
-        // 페이지 로드 시 회원 정보를 가져와서 mId 필드를 설정하는 함수
-        window.addEventListener("load", function () {
-            fetch("/api/v1/userInfo", {
-                method: "GET"
-            })
-                .then(response => response.text())
-                .then(userId => {
-                    document.getElementById("mId").value = userId; // 회원 ID 값을 설정
-                })
-                .catch(error => console.error("Error:", error));
-        });
-
-        // 도서 대여 버튼 클릭 이벤트 핸들러 추가
-        document.getElementById("borrowBookBtn").addEventListener("click", function () {
-            const bId = document.getElementById("bId").value;
-            const mId = document.getElementById("mId").value;
-
-            fetch(`/api/v1/borrow/books?bId=${bId}&mId=${mId}`, {
-                method: "GET"
-            })
-                .then(response => {
-                    console.log("Response:", response); // 응답 객체를 출력
-                    return response.json().then(data => {
-                        console.log("Data:", data); // JSON 데이터를 출력
-                        if (response.ok) {
-                            alert("도서 대여 성공!");
-                        } else {
-                            alert(`도서 대여 실패: ${data.message}`);
-                        }
-                    })
-                    .catch(error => {
-                        console.error("Error:", error);
-                        alert("도서 대여 실패 : 서버 오류 발생!");
-                    });
-
-        })
-                .catch(error => {
-                    console.error("Fetch Error:", error);
-                    alert("도서 대여 실패: 서버 오류 발생!");
-                });
-        });
-    </script>
-    </body>
 </html>

@@ -10,14 +10,16 @@ import lombok.Data;
 @Data
 @AllArgsConstructor
 public class FindBookResponseDto {
+    private Long bId;
     private String bName;
     private String bWriter;
     private String bPublish;
     private Category bCategory;
-    private int bCount;
+    private Long bCount;
 
     public static FindBookResponseDto of(Book book) {
         return FindBookResponseDto.builder()
+                .bId(book.getId())
                 .bName(book.getBName())
                 .bWriter(book.getBWriter())
                 .bPublish(book.getBPublish())

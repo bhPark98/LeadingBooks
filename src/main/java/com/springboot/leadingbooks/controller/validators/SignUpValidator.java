@@ -37,6 +37,10 @@ public class SignUpValidator implements Validator, PwdFormValidator, NameFormVal
             errors.rejectValue("nickname", "", "닉네임 중복");
         }
 
+        // 비밀번호 일치 체크
+        if(pwd != null && rePwd != null && !pwd.equals(rePwd)) {
+            errors.rejectValue("pwd", "", "비밀번호가 일치하지 않습니다.");
+        }
 
 //        // 비밀번호 양식 확인
 //        if(!check_number(pwd) || !check_alphabet(pwd) || !check_special(pwd)) {

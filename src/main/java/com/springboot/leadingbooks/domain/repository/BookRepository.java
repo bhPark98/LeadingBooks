@@ -63,8 +63,9 @@ public class BookRepository {
         return count != 0;
     }
 
-    public Optional<Long> countBooks() {
-        return em.createQuery("select count(*) from Book b", Long.class)
+    public Optional<Long> countBooks(Long bId) {
+        return em.createQuery("select b.bCount from Book b where b.id =: bId", Long.class)
+                .setParameter("bId", bId)
                 .getResultStream().findAny();
     }
 }

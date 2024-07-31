@@ -1,170 +1,247 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
     <title>메인</title>
-    <link rel="stylesheet" th:href="@{/webjars/bootstrap/4.6.0/css/bootstrap.min.css}">
+
     <style>
-        .selector-for-some-widget {
-            box-sizing: content-box;
-        }
-        ul.pagination {
-            list-style-type: none;
-            padding: 0;
-        }
-        ul.pagination li {
-            display: inline;
-            margin-right: 5px;
-        }
-        ul.pagination li a {
-            text-decoration: none;
-            padding: 5px 10px;
-            border: 1px solid #ccc;
-            color: #333;
-        }
-        ul.pagination li a.active {
-            font-weight: bold;
-            background-color: #eee;
-        }
-        .img-profile {
-            width: 40px; /* 이미지 너비 */
-            height: 40px; /* 이미지 높이 */
-            margin-right: 10px; /* 오른쪽 여백 추가 */
+        .sidebar-brand {
+            display: flex; /* Flexbox 사용 */
+            align-items: flex-start; /* 아이콘과 텍스트를 상단 정렬 */
         }
 
-        .nav-item {
-            display: flex; /* Flexbox 사용 */
-            align-items: center; /* 수직 중앙 정렬 */
-            justify-content: flex-end; /* 수평 오른쪽 정렬 */
+        .sidebar-brand-icon {
+            margin-right: 10px; /* 아이콘과 텍스트 간의 간격 조정 */
+        }
+        .custom-dropdown {
+            height: 38px; /* 드롭다운 버튼 높이를 검색창과 맞춤 */
+            padding: 0 10px; /* 드롭다운 버튼 패딩 조정 */
+            min-width: 100px; /* 드롭다운 버튼 최소 너비 */
         }
 
-        .nav-link {
-            display: flex; /* Flexbox 사용 */
-            align-items: center; /* 수직 중앙 정렬 */
-            justify-content: flex-end; /* 수평 오른쪽 정렬 */
+        .custom-input {
+            width: 300px; /* 검색창 너비 조정 */
+            height: 38px; /* 검색창 높이 조정 */
+        }
+
+        .input-group {
+            width: 400px; /* 전체 입력 그룹 너비 조정 */
         }
     </style>
+
+    <!-- Custom fonts for this template -->
+    <link href="/bootstrap/vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
+    <link
+        href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
+        rel="stylesheet">
+
+    <!-- Custom styles for this template -->
+    <link href="/bootstrap/css/sb-admin-2.min.css" rel="stylesheet">
+
+    <!-- Custom styles for this page -->
+    <link href="/bootstrap/vendor/datatables/dataTables.bootstrap4.min.css" rel="stylesheet">
+
 </head>
-<body>
-<form class="d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100 navbar-search">
-    <div class="input-group">
-        <input type="text" class="form-control bg-light border-0 small" placeholder="Search for..."
-               aria-label="Search" aria-describedby="basic-addon2">
-        <div class="input-group-append">
-            <button class="btn btn-primary" type="button">
-                <i class="fas fa-search fa-sm"></i>
-            </button>
+
+<body id="page-top">
+
+    <!-- Page Wrapper -->
+    <div id="wrapper">
+
+        <!-- Sidebar -->
+        <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
+
+            <!-- Sidebar - Brand -->
+            <a class="sidebar-brand d-flex align-items-center justify-content-center" href="/api/v1/all/books">
+                <div class="sidebar-brand-icon rotate-n-15">
+                    <i class="fas fa-laugh-wink"></i>
+                </div>
+                <div class="sidebar-brand-text mx-3">LeadingBooks</div>
+            </a>
+        </ul>
+
+
+            <!-- Content Wrapper -->
+        <div id="content-wrapper" class="d-flex flex-column">
+
+            <!-- Main Content -->
+            <div id="content">
+
+                <!-- Topbar -->
+                <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
+
+
+                    <!-- Topbar Search -->
+                    <form
+                        class="d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100 navbar-search">
+                        <div class="input-group">
+                            <ul class="navbar-nav ml-auto">
+                                <li class="nav-item dropdown">
+                                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown"
+                                       role="button" data-toggle="dropdown" aria-haspopup="true"
+                                       aria-expanded="false">
+                                        선택하세요
+                                    </a>
+                                    <div class="dropdown-menu dropdown-menu-right animated--grow-in"
+                                         aria-labelledby="navbarDropdown">
+                                        <a class="dropdown-item" href="#" th:value="title">도서제목</a>
+                                        <a class="dropdown-item" href="#" th:value="writer">도서작가</a>
+                                        <a class="dropdown-item" href="#" th:value="category">카테고리</a>
+                                    </div>
+                                </li>
+                            </ul>
+                            <input type="text" id="search-input" class="form-control bg-light border-0 small" placeholder="Search for..."
+                                aria-label="Search" aria-describedby="basic-addon2">
+                            <div class="input-group-append">
+                                <button class="btn btn-primary" id="searchButton" type="button">
+                                    <i class="fas fa-search fa-sm"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+
+                    <!-- Topbar Navbar -->
+                    <ul class="navbar-nav ml-auto">
+
+                        <div class="topbar-divider d-none d-sm-block"></div>
+
+                        <!-- Nav Item - User Information -->
+                        <li class="nav-item dropdown no-arrow">
+                            <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
+                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <span class="mr-2 d-none d-lg-inline text-gray-600 small">내정보</span>
+                                <img class="img-profile rounded-circle"
+                                    src="/bootstrap/img/undraw_profile.svg">
+                            </a>
+                            <!-- Dropdown - User Information -->
+                            <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in"
+                                aria-labelledby="userDropdown">
+                                <a class="dropdown-item" id="myPageLink">
+                                    <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
+                                    마이페이지
+                                </a>
+                                <a class="dropdown-item" href="/api/v1/logout" data-toggle="modal" data-target="#logoutModal">
+                                    <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
+                                    로그아웃
+                                </a>
+                            </div>
+                        </li>
+
+                    </ul>
+
+                </nav>
+                <!-- End of Topbar -->
+
+                <!-- Begin Page Content -->
+                <div class="container-fluid">
+
+                    <!-- Page Heading -->
+                    <h1 class="h3 mb-2 text-gray-800">오늘의도서</h1>
+                    <p class="mb-4">환영합니다. 세상을 이끄는 도서 LeadingBooks입니다.</p>
+
+                    <!-- DataTales Example -->
+                    <div class="card shadow mb-4">
+                        <div class="card-header py-3">
+                            <h6 class="m-0 font-weight-bold text-primary">도서 목록</h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                                    <thead>
+                                        <tr>
+                                            <th>책제목</th>
+                                            <th>출판사</th>
+                                            <th>작가</th>
+                                            <th>카테고리</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="bookResults">
+                                        <tr th:each="book : ${books}">
+                                            <td>
+                                                <a th:href="@{/api/v1/detail/reviews(bId=${book.getId()})}" th:text="${book.getBName()}"></a>
+                                            </td>
+                                            <td th:text="${book.getBPublish()}"></td>
+                                            <td th:text="${book.getBWriter()}"></td>
+                                            <td th:text="${book.getBCategory()}"></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                <!-- /.container-fluid -->
+
+            </div>
+            <!-- End of Main Content -->
+
+            <!-- Footer -->
+            <footer class="sticky-footer bg-white">
+                <div class="container my-auto">
+                    <div class="copyright text-center my-auto">
+                        <span>Copyright &copy; LeadingBooks 2024</span>
+                    </div>
+                </div>
+            </footer>
+            <!-- End of Footer -->
+
         </div>
-    </div>
-</form>
+        <!-- End of Content Wrapper -->
 
-<!-- Nav Item - User Information -->
-<li class="nav-item dropdown no-arrow">
-    <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
-       data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-        <span class="mr-2 d-none d-lg-inline text-gray-600 small">닉네임</span>
-        <img class="img-profile rounded-circle" src="/bootstrap/img/undraw_profile.svg" style="width: 40px; height: 40px;">
-    </a>
-    <!-- Dropdown - User Information -->
-    <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in"
-         aria-labelledby="userDropdown">
-        <a class="dropdown-item" href="#">
-            <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
-            Profile
-        </a>
-        <a class="dropdown-item" href="#">
-            <i class="fas fa-cogs fa-sm fa-fw mr-2 text-gray-400"></i>
-            Settings
-        </a>
-        <a class="dropdown-item" href="#">
-            <i class="fas fa-list fa-sm fa-fw mr-2 text-gray-400"></i>
-            Activity Log
-        </a>
-        <div class="dropdown-divider"></div>
-        <a class="dropdown-item" href="#" data-toggle="modal" data-target="#logoutModal">
-            <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
-            Logout
-        </a>
     </div>
-</li>
+    <!-- End of Page Wrapper -->
 
-<!-- Nav Item - Search Dropdown (Visible Only XS) -->
-<li class="nav-item dropdown no-arrow d-sm-none">
-    <a class="nav-link dropdown-toggle" href="#" id="searchDropdown" role="button"
-       data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-        <i class="fas fa-search fa-fw"></i>
+    <!-- Scroll to Top Button-->
+    <a class="scroll-to-top rounded" href="#page-top">
+        <i class="fas fa-angle-up"></i>
     </a>
-    <!-- Dropdown - Messages -->
-    <div class="dropdown-menu dropdown-menu-right p-3 shadow animated--grow-in"
-         aria-labelledby="searchDropdown">
-        <form class="form-inline mr-auto w-100 navbar-search">
-            <div class="input-group">
-                <input type="text" class="form-control bg-light border-0 small"
-                       placeholder="Search for..." aria-label="Search"
-                       aria-describedby="basic-addon2">
-                <div class="input-group-append">
-                    <button class="btn btn-primary" type="button">
-                        <i class="fas fa-search fa-sm"></i>
+
+    <!-- Logout Modal-->
+    <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">정말 로그아웃하시겠습니까?</h5>
+                    <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
                     </button>
                 </div>
+                <div class="modal-body">로그아웃을 원하시면 밑에 로그아웃 버튼을 눌러주세요.</div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" type="button" data-dismiss="modal">취소</button>
+                    <a class="btn btn-primary" href="/api/v1/logout">로그아웃</a>
+                </div>
             </div>
-        </form>
-    </div>
-</li>
-
-    <div>
-        <h2>책 목록</h2>
-        <ul>
-            <li th:each="book : ${books}">
-                <a th:href="@{/api/v1/detail/reviews(bId=${book.getId()})}">
-                <span th:text="${book.getBName()}">책 제목</span>
-                </a>
-            </li>
-        </ul>
-    </div>
-    <div>
-        <ul class="pagination">
-            <li th:if="${page > 0}">
-                <a th:href="@{/api/v1/all/books(page=${page - 1}, size=${size})}">&lt;</a>
-            </li>
-            <li th:each="i : ${#numbers.sequence(0, totalPages - 1)}">
-                <a th:href="@{/api/v1/all/books(page=${i}, size=${size})}"
-                   th:text="${i + 1}"
-                   th:classappend="${i == page} ? 'active' : ''"></a>
-            </li>
-            <li th:if="${page < totalPages - 1}">
-                <a th:href="@{/api/v1/all/books(page=${page + 1}, size=${size})}">&gt;</a>
-            </li>
-        </ul>
+        </div>
     </div>
 
-    <form th:action="@{/api/v1/logout}" method="get">
-        <button type="submit">로그아웃</button>
-    </form>
+    <!-- Bootstrap core JavaScript-->
+    <script src="/bootstrap/vendor/jquery/jquery.min.js"></script>
+    <script src="/bootstrap/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
 
-    <form id="myPageForm" method="get">
-        <button type="submit">내정보</button>
-    </form>
+    <!-- Core plugin JavaScript-->
+    <script src="/bootstrap/vendor/jquery-easing/jquery.easing.min.js"></script>
 
+    <!-- Custom scripts for all pages-->
+    <script src="/bootstrap/js/sb-admin-2.min.js"></script>
 
-    <script th:src="@{/webjars/jquery/3.6.0/jquery.min.js}"></script>
-    <script th:src="@{/webjars/popper.js/2.9.3/umd/popper.min.js}"></script>
-    <script th:src="@{/webjars/bootstrap/4.6.0/js/bootstrap.min.js}"></script>
-    <script>
-        // 페이지 로드 시 회원 정보를 가져와서 mId 필드를 설정하는 함수
-        window.addEventListener("load", function() {
-            fetch("/api/v1/userInfo", {
-                method: "GET"
-            })
-                .then(response => response.text())
-                .then(userId => {
-                    // mId를 기반으로 폼 액션 URL을 설정
-                    const myPageForm = document.getElementById("myPageForm");
-                    myPageForm.action = `/api/v1/myPage/${userId}`;
-                })
-                .catch(error => console.error("Error:", error));
-        });
-    </script>
+    <!-- Page level plugins -->
+    <script src="/bootstrap/vendor/datatables/jquery.dataTables.min.js"></script>
+    <script src="/bootstrap/vendor/datatables/dataTables.bootstrap4.min.js"></script>
+
+    <!-- Page level custom scripts -->
+    <script src="/bootstrap/js/demo/datatables-demo.js"></script>
+
+    <script src="/book/home2.js"></script>
 </body>
+
 </html>

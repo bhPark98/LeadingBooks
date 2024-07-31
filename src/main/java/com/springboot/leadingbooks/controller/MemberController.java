@@ -8,6 +8,7 @@ import com.springboot.leadingbooks.controller.validators.SignUpValidator;
 import com.springboot.leadingbooks.domain.entity.Member;
 import com.springboot.leadingbooks.services.MemberService;
 import com.springboot.leadingbooks.controller.dto.request.LoginRequestDto;
+import com.springboot.leadingbooks.services.dto.request.FindPwdRequestDto;
 import com.springboot.leadingbooks.services.dto.response.MyPageResponseDto;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
@@ -53,10 +54,10 @@ public class MemberController {
         signUpValidator.validate(memberRequestDto, errors);
 
         if(bindingResult.hasErrors())
-            return "members/createMemberForm";
+            return "members/register";
 
         if(errors.hasErrors())
-            return "members/createMemberForm";
+            return "members/register";
 
         memberService.join(memberRequestDto);
 
@@ -70,7 +71,7 @@ public class MemberController {
     @GetMapping("/sign/in")
     public String signInForm(Model model) {
         model.addAttribute("loginRequestDto", new LoginRequestDto());
-        return "members/login2";
+        return "members/login";
     }
 
     // 로그인
@@ -113,10 +114,10 @@ public class MemberController {
 
     // 회원탈퇴 페이지
     @GetMapping("/delete/user")
-    public String deleteUser(Model model) {
+    public String deleteUserForm(Model model) {
         model.addAttribute("dto", new DeleteUserRequestDto());
-        log.info("model = {}", model);
-        return "members/deleteMember";
+        log.info(model);
+        return "members/deleteMemberForm";
     }
 
     // 회원탈퇴
@@ -146,6 +147,7 @@ public class MemberController {
 
          return "members/myPage";
     }
+
     // 닉네임 변경
     @PutMapping("/changeNickname/{mId}")
     public ResponseEntity<?> changeNickname(@PathVariable Long mId, @RequestBody ChangeNicknameRequestDto dto) {
@@ -161,8 +163,37 @@ public class MemberController {
         memberService.sendCodeToEmail(email);
         return ResponseEntity.ok(HttpStatus.OK);
     }
+
+    // 비밀번호 재설정 페이지
+    @GetMapping("/reset/pwd")
+    public String resetPwdForm() {
+        return "members/forgot-password";
+    }
+
+    // 비밀번호 재설정
+    @PostMapping("/reset/pwd")
+    public ResponseEntity<?> resetPwd(@RequestParam("email")String email) {
+        memberService.sendPwdLinkToEmail(email);
+        return ResponseEntity.ok(HttpStatus.OK);
+    }
+
+    // 비밀번호 찾기 페이지
+    @GetMapping("/find/pwd")
+    public String findPwdForm(Model model) {
+        model.addAttribute("dto", new FindPwdRequestDto());
+        return "members/findPwdForm";
+    }
+
+    // 비밀번호 찾기
+    @PostMapping("/find/pwd")
+    public ResponseEntity<?> findPwd(@ModelAttribute FindPwdRequestDto dto) {
+        log.info("dto = {}", dto);
+        memberService.findMemberPwd(dto);
+        return ResponseEntity.ok(HttpStatus.OK);
+    }
+
     // 인증번호 검증
-    @GetMapping("emails/verifications")
+    @GetMapping("/emails/verifications")
     public ResponseEntity<?> verificationEmail(@RequestParam("email") @Valid String email,
                                                @RequestParam("code") String authCode) {
         memberService.verifiedCode(email, authCode);

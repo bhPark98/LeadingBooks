@@ -57,7 +57,8 @@ function displayResults(books) {
 
         const titleCell = document.createElement('td');
         const titleLink = document.createElement('a');
-        titleLink.href = `/api/v1/detail/reviews(bId=${book.id})`;
+        titleLink.href = `/api/v1/detail/reviews?bId=${book.bid}`;
+        console.log(titleLink);
         titleLink.innerText = book.bname;
         titleCell.appendChild(titleLink);
         row.appendChild(titleCell);
