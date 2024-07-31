@@ -89,6 +89,9 @@
   * services
   * util
 
+## 6. UI 디자인
+
+ <https://www.figma.com/design/rKDpT24NE4VLHQK2MADwTR/leadingbooks?node-id=0-1&t=ONRigkEhbviRfvIS-0>
 
  
     
