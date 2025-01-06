@@ -9,29 +9,48 @@ jobs:
   Deploy:
     runs-on: ubuntu-latest
     steps:
-      - name: SSH(원격 접속)로 EC2에 접속하기
-        uses: appleboy/ssh-action@v1.0.3
-        env:
-          APPLICATION_PROPERTIES: ${{ secrets.APPLICATION_PROPERTIES }}
+      - name: Github Repository에 올린 파일들을 불러오기
+        uses: actions/checkout@v4
+
+      - name: JDK 17버전 설치
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+
+      - name: application.yml 파일 만들기
+        run: echo "${{ secrets.APPLICATION.PROPERTIES }}" > ./src/main/resources/application.yml
+
+      - name: 테스트 및 빌드하기
+        run: ./gradlew clean build
+
+      - name: 빌드된 파일 이름 변경하기
+        run: mv ./build/libs/*SNAPSHOT.jar ./project.jar
+
+      - name: SCP로 EC2에 빌드된 파일 전송하기
+        uses: appleboy/scp-action@v0.1.7
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USERNAME }}
           key: ${{ secrets.EC2_PRIVATE_KEY }}
-          envs: APPLICATION_PROPERTIES
+          source: project.jar
+          target: /home/ubuntu/LeadingBooks/tobe
+
+
+      - name: SSH(원격 접속)로 EC2에 접속하기
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USERNAME }}
+          key: ${{ secrets.EC2_PRIVATE_KEY }}
           script_stop: true
           script: |
-            # ec2 접속해서 경로 이동
-                    cd /home/ubuntu/LeadingBooks
-            # 기존 파일 삭제
-                    rm -rf src/main/resources/application.yml
-            # 레포지토리에서 ec2로 pull
-                    git pull origin main
-            # APPLICATION_PROPERTIES에 저장되는 파일값을 yml파일에 작성
-                    echo "${APPLICATION_PROPERTIES}" > src/main/resources/application.yml
-            # ec2에서 빌드하기
-                    ./gradlew clean build
-            # 서버가 돌아가고 있으면 끄고 안 돌아가고 있으면 상관 없음
-                    sudo fuser -k -n tcp 8080 || true
-            # 표준 출력
-                    nohup java -jar build/libs/*SNAPSHOT.jar > ./output.log 2>&1 &
+            rm -rf /home/ubuntu/LeadingBooks/current
+            mkdir /home/ubuntu/LeadingBooks/current
+            mv /home/ubuntu/LeadingBooks/tobe/project.jar /home/ubuntu/LeadingBooks/current/project.jar
+            cd /home/ubuntu/LeadingBooks/current
+            sudo fuser -k -n tcp 8080 || true
+            nohup java -jar project.jar > ./output.log 2>&1 &
+            rm -rf /home/ubuntu/LeadingBooks/tobe
+            
 
