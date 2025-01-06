@@ -20,18 +20,18 @@ jobs:
           envs: APPLICATION_PROPERTIES
           script_stop: true
           script: |
-#            ec2 접속해서 경로 이동
-            cd /home/ubuntu/LeadingBooks
-#            기존 파일 삭제
-            rm -rf src/main/resources/application.yml
-#            레포지토리에서 ec2로 pull
-            git pull origin main
-#            APPLICATION_PROPERTIES에 저장되는 파일값을 yml파일에 작성
-            echo "APPLICATION_PROPERTIES" > src/main/resources/application.yml
-#            // ec2에서 빌드하기
-            ./gradlew clean build
-#            서버가 돌아가고 있으면 끄고 안돌아가고 있으면 상관x
-            sudo fuser -k -n tcp 8080 || true
-#            표준 출력
-            nohup java -jar build/libs/*SNAPSHOT.jar > ./output.log 2>&1 &
+            # ec2 접속해서 경로 이동
+                    cd /home/ubuntu/LeadingBooks
+            # 기존 파일 삭제
+                    rm -rf src/main/resources/application.yml
+            # 레포지토리에서 ec2로 pull
+                    git pull origin main
+            # APPLICATION_PROPERTIES에 저장되는 파일값을 yml파일에 작성
+                    echo "${APPLICATION_PROPERTIES}" > src/main/resources/application.yml
+            # ec2에서 빌드하기
+                    ./gradlew clean build
+            # 서버가 돌아가고 있으면 끄고 안 돌아가고 있으면 상관 없음
+                    sudo fuser -k -n tcp 8080 || true
+            # 표준 출력
+                    nohup java -jar build/libs/*SNAPSHOT.jar > ./output.log 2>&1 &
 
