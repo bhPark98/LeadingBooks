@@ -33,6 +33,7 @@ jobs:
       - name: Test
         run: |
           ls
+          ls ./src/main/resources
           pwd
 
       - name: SCP로 EC2에 빌드된 파일 전송하기
@@ -43,7 +44,6 @@ jobs:
           key: ${{ secrets.EC2_PRIVATE_KEY }}
           source: |
             project.jar
-            src/main/resources/application.yml
           target: /home/ubuntu/LeadingBooks/tobe
 
 
@@ -58,9 +58,7 @@ jobs:
             rm -rf /home/ubuntu/LeadingBooks/current
             mkdir /home/ubuntu/LeadingBooks/current
             mv /home/ubuntu/LeadingBooks/tobe/project.jar /home/ubuntu/LeadingBooks/current/project.jar
-            mv /home/ubuntu/LeadingBooks/tobe/application.yml /home/ubuntu/LeadingBooks/current/application.yml
             cd /home/ubuntu/LeadingBooks/current
-            chmod +x project.jar
             sudo fuser -k -n tcp 8080 || true
             nohup java -jar project.jar > ./output.log 2>&1 &
             rm -rf /home/ubuntu/LeadingBooks/tobe
