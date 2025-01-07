@@ -30,6 +30,9 @@ jobs:
       - name: 빌드된 파일 이름 변경하기
         run: mv ./build/libs/*SNAPSHOT.jar ./project.jar
 
+      - name: JAR 파일 내용 확인하기
+        run: jar tf ./project.jar
+
       - name: Test
         run: |
           ls
