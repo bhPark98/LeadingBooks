@@ -19,7 +19,8 @@ jobs:
           java-version: 17
 
       - name: application.yml 파일 만들기
-        run: echo "${{ secrets.APPLICATION.PROPERTIES }}" > ./src/main/resources/application.yml
+        run: |
+          echo "${{ secrets.APPLICATION_PROPERTIES }}" | tr -d '\r' > ./src/main/resources/application.yml
 
       - name: 실행파일에 권한 부여하기
         run: chmod +x ./gradlew
