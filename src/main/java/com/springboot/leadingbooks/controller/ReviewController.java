@@ -24,7 +24,7 @@ public class ReviewController {
         log.info("Required Messages : ");
         BookReviewResponseDto bookDetail = reviewService.WriteReview(reviewCreateRequestDto);
         model.addAttribute("bookDetail", bookDetail);
-        return "redirect:/api/v1/books/detail";
+        return "redirect:/books/detail";
     }
     // 도서 세부정보 조회
     @GetMapping("/detail/reviews")

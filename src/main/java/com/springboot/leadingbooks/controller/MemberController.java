@@ -108,7 +108,7 @@ public class MemberController {
         cookie.setMaxAge(0);
         response.addCookie(cookie);
 
-        return "redirect:/api/v1/sign/in";
+        return "redirect:/sign/in";
     }
 
     // 회원탈퇴 페이지

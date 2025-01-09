@@ -29,7 +29,7 @@ public class BookController {
         List<Book> books = bookService.getAllBooks();
         model.addAttribute("books", books);
 
-        return "/books/home";
+        return "books/home";
     }
 
 //    // 책 전체 조회
