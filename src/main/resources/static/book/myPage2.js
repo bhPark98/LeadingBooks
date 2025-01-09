@@ -10,7 +10,7 @@ document.getElementById("extendBookBtn").addEventListener("click", function () {
     const bookIds = Array.from(checkBooks).map(checkBook => checkBook.value);
 
     const requests = bookIds.map(bId => {
-        return fetch(`/api/v1/extend/books?mId=${mId}&bId=${bId}`, {
+        return fetch(`/extend/books?mId=${mId}&bId=${bId}`, {
             method: "PUT"
         })
             .then(response => response.json().then(data => {
@@ -58,7 +58,7 @@ document.getElementById("returnBookBtn").addEventListener("click", function () {
     const bookIds = Array.from(checkBooks).map(checkBook => checkBook.value);
 
     const requests = bookIds.map(bId => {
-        return fetch(`/api/v1/return/books?mId=${mId}&bId=${bId}`, {
+        return fetch(`/return/books?mId=${mId}&bId=${bId}`, {
             method: "DELETE"
         })
             .then(response => {
@@ -116,7 +116,7 @@ document.getElementById("changeNicknameBtn").addEventListener("click", function 
             return;
         }
 
-        fetch(`/api/v1/changeNickname/${mId}`, {
+        fetch(`/changeNickname/${mId}`, {
             method: "PUT",
             headers: {
                 "Content-Type": "application/json"

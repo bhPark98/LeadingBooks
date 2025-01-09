@@ -11,7 +11,7 @@ document.getElementById("reviewSubmitForm").addEventListener("click", function (
         rContent: document.getElementById("rContent").value
     };
 
-    fetch("/api/v1/write/reviews", {
+    fetch("/write/reviews", {
         method: "POST",
         headers: {
             "Content-Type": "application/json"
@@ -32,14 +32,14 @@ document.getElementById("reviewSubmitForm").addEventListener("click", function (
 
 // 페이지 로드 시 회원 정보를 가져와서 mId 필드를 설정하는 함수
 window.addEventListener("load", function () {
-    fetch("/api/v1/userInfo", {
+    fetch("/userInfo", {
         method: "GET"
     })
         .then(response => response.text())
         .then(userId => {
             document.getElementById("mId").value = userId; // 회원 ID 값을 설정
             const myPageLink = document.getElementById("myPageLink");
-            myPageLink.href = `/api/v1/myPage/${userId}`;
+            myPageLink.href = `/myPage/${userId}`;
         })
         .catch(error => console.error("Error:", error));
 });
@@ -49,7 +49,7 @@ document.getElementById("borrowBookBtn").addEventListener("click", function () {
     const bId = document.getElementById("bId").value;
     const mId = document.getElementById("mId").value;
 
-    fetch(`/api/v1/borrow/books?bId=${bId}&mId=${mId}`, {
+    fetch(`/borrow/books?bId=${bId}&mId=${mId}`, {
         method: "GET"
     })
         .then(response => {

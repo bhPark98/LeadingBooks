@@ -12,7 +12,7 @@ form.addEventListener('submit', async (event) => {
         });
         if(response.ok) {
             document.getElementById('result-message').textContent = '회원탈퇴 성공!';
-            window.location.href = "/api/v1/sign/up";
+            window.location.href = "/sign/up";
         } else {
             const errorData = await response.json();
             document.getElementById('result-message').textContent = `회원탈퇴 실패!: ${errorData.message}`;

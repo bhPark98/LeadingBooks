@@ -59,7 +59,7 @@
         <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
 
             <!-- Sidebar - Brand -->
-            <a class="sidebar-brand d-flex align-items-center justify-content-center" href="/api/v1/all/books">
+            <a class="sidebar-brand d-flex align-items-center justify-content-center" href="/all/books">
                 <div class="sidebar-brand-icon rotate-n-15">
                     <i class="fas fa-laugh-wink"></i>
                 </div>
@@ -165,7 +165,7 @@
                                     <tbody id="bookResults">
                                         <tr th:each="book : ${books}">
                                             <td>
-                                                <a th:href="@{/api/v1/detail/reviews(bId=${book.getId()})}" th:text="${book.getBName()}"></a>
+                                                <a th:href="@{/detail/reviews(bId=${book.getId()})}" th:text="${book.getBName()}"></a>
                                             </td>
                                             <td th:text="${book.getBPublish()}"></td>
                                             <td th:text="${book.getBWriter()}"></td>
@@ -218,7 +218,7 @@
                 <div class="modal-body">로그아웃을 원하시면 밑에 로그아웃 버튼을 눌러주세요.</div>
                 <div class="modal-footer">
                     <button class="btn btn-secondary" type="button" data-dismiss="modal">취소</button>
-                    <a class="btn btn-primary" href="/api/v1/logout">로그아웃</a>
+                    <a class="btn btn-primary" href="/logout">로그아웃</a>
                 </div>
             </div>
         </div>

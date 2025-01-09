@@ -10,7 +10,7 @@ document.getElementById("loginButton").addEventListener("click", function () {
         .then(response => {
             if(response.ok) {
                 alert("로그인 성공!");
-                window.location.href = "/api/v1/all/books";
+                window.location.href = "/all/books";
             } else if(response.status === 404) {
                 response.json().then(data => {
                     console.log(data);

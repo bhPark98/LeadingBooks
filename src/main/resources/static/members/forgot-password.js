@@ -12,7 +12,7 @@ document.getElementById("resetForm").addEventListener("submit", function(event) 
                 // 요청이 성공적으로 완료된 경우
                 alert("이메일이 전송되었습니다.");
                 setTimeout(() => {
-                    window.location.href = "/api/v1/sign/up"; // 회원가입 페이지로 리다이렉트
+                    window.location.href = "/sign/up"; // 회원가입 페이지로 리다이렉트
                 }, 2000); // 2초 후 리다이렉트
             } else {
                 // 요청이 실패한 경우

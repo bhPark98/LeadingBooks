@@ -2,7 +2,7 @@ let isEmailVerified = false;
 
 document.getElementById("emailVerifyButton").addEventListener("click", function () {
     const email = document.getElementById("email").value;
-    fetch(`/api/v1/emails/verification-requests`, {
+    fetch(`/emails/verification-requests`, {
         method: "POST",
         headers: {
             "Content-Type" : "application/x-www-form-urlencoded"
@@ -32,7 +32,7 @@ document.getElementById("emailVerifyButton").addEventListener("click", function 
 document.getElementById("verifyCodeButton").addEventListener("click", function () {
     var email = document.getElementById("email").value;
     var authCode = document.getElementById("authCode").value;
-    fetch(`/api/v1/emails/verifications?email=${encodeURIComponent(email)}&code=${encodeURIComponent(authCode)}`, {
+    fetch(`/emails/verifications?email=${encodeURIComponent(email)}&code=${encodeURIComponent(authCode)}`, {
         method: "GET"
     }).then(response => {
         if(response.ok) {

@@ -1,12 +1,12 @@
 window.addEventListener("load", function () {
-    fetch("/api/v1/userInfo", {
+    fetch("/userInfo", {
         method: "GET"
     })
         .then(response => response.text())
         .then(userId => {
 
             const myPageLink = document.getElementById("myPageLink");
-            myPageLink.href = `/api/v1/myPage/${userId}`;
+            myPageLink.href = `/myPage/${userId}`;
         })
         .catch(error => console.error("Error:", error));
 });
@@ -36,7 +36,7 @@ document.getElementById('searchButton').addEventListener('click', function () {
         paramName = 'bCategory';
     }
 
-    const apiUrl = `/api/v1/search/${selectedSearchType}?${paramName}=${encodeURIComponent(searchQuery)}`;
+    const apiUrl = `/search/${selectedSearchType}?${paramName}=${encodeURIComponent(searchQuery)}`;
     console.log("API URL:", apiUrl);
 
     fetch(apiUrl)
@@ -57,7 +57,7 @@ function displayResults(books) {
 
         const titleCell = document.createElement('td');
         const titleLink = document.createElement('a');
-        titleLink.href = `/api/v1/detail/reviews?bId=${book.bid}`;
+        titleLink.href = `/detail/reviews?bId=${book.bid}`;
         console.log(titleLink);
         titleLink.innerText = book.bname;
         titleCell.appendChild(titleLink);

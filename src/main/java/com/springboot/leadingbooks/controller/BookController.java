@@ -20,7 +20,6 @@ import java.util.List;
 @Controller
 @RequiredArgsConstructor
 @Log4j2
-@RequestMapping("api/v1")
 public class BookController {
     private final BookService bookService;
 

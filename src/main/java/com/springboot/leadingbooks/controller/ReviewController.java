@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.*;
 @Controller
 @RequiredArgsConstructor
 @Log4j2
-@RequestMapping("api/v1")
 public class ReviewController {
     private final ReviewService reviewService;
     private final BookService bookService;

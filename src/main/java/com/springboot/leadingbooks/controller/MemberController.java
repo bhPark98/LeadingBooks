@@ -35,7 +35,6 @@ import java.util.Map;
 @Controller
 @RequiredArgsConstructor
 @Log4j2
-@RequestMapping("api/v1")
 public class MemberController {
     private final MemberService memberService;
     private final SignUpValidator signUpValidator;
