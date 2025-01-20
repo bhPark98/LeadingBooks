@@ -27,26 +27,26 @@ jobs:
 
       - name: 테스트 및 빌드하기
         run: ./gradlew clean build
+            
 
-      - name: AWS Resource에 접근할 수 있게 AWS Credentials 설정
-        uses: aws-actions/configure-aws-credentials@v4
+      - name: 빌드된 파일 이름 변경하기
+        run: mv ./build/libs/*SNAPSHOT.jar ./project.jar
+
+      - name: Test
+        run: |
+          ls
+          pwd
+
+      - name: SCP로 EC2에 빌드된 파일 전송하기
+        uses: appleboy/scp-action@v0.1.7
         with:
-          aws-region: ap-northeast-2
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USERNAME }}
+          key: ${{ secrets.EC2_PRIVATE_KEY }}
+          source: |
+            project.jar
+          target: /home/ubuntu/LeadingBooks/tobe
 
-      - name: ECR에 로그인하기
-        id: login-ecr
-        uses: aws-actions/amazon-ecr-login@v2
-
-      - name: Docker 이미지 생성
-        run: docker build -t LeadingBooks .
-
-      - name: Docker 이미지에 Tag 붙이기
-        run: docker tag LeadingBooks ${{ steps.login-ecr.outputs.registry }}/LeadingBooks:latest
-
-      - name: ECR에 Docker 이미지 Push
-        run: docker push ${{ steps.login-ecr.outputs.registry }}/LeadingBooks:latest
 
       - name: SSH(원격 접속)로 EC2에 접속하기
         uses: appleboy/ssh-action@v1.0.3
@@ -56,44 +56,11 @@ jobs:
           key: ${{ secrets.EC2_PRIVATE_KEY }}
           script_stop: true
           script: |
-            docker stop LeadingBooks || true
-            docker rm LeadingBooks || true
-            docker pull ${{ steps.login-ecr.outputs.registry }}/LeadingBooks:latest
-            docker run -d --name LeadingBooks -p 8080:8080 ${{ steps.login-ecr.outputs.registry }}/LeadingBooks:latest
-            
+            rm -rf /home/ubuntu/LeadingBooks/current
+            mkdir /home/ubuntu/LeadingBooks/current
+            mv /home/ubuntu/LeadingBooks/tobe/project.jar /home/ubuntu/LeadingBooks/current/project.jar
+            cd /home/ubuntu/LeadingBooks/current
+            sudo fuser -k -n tcp 8080 || true
+            nohup java -jar project.jar > ./output.log 2>&1 &
+            rm -rf /home/ubuntu/LeadingBooks/tobe
 
-#      - name: 빌드된 파일 이름 변경하기
-#        run: mv ./build/libs/*SNAPSHOT.jar ./project.jar
-#
-#      - name: Test
-#        run: |
-#          ls
-#          pwd
-#
-#      - name: SCP로 EC2에 빌드된 파일 전송하기
-#        uses: appleboy/scp-action@v0.1.7
-#        with:
-#          host: ${{ secrets.EC2_HOST }}
-#          username: ${{ secrets.EC2_USERNAME }}
-#          key: ${{ secrets.EC2_PRIVATE_KEY }}
-#          source: |
-#            project.jar
-#          target: /home/ubuntu/LeadingBooks/tobe
-#
-#
-#      - name: SSH(원격 접속)로 EC2에 접속하기
-#        uses: appleboy/ssh-action@v1.0.3
-#        with:
-#          host: ${{ secrets.EC2_HOST }}
-#          username: ${{ secrets.EC2_USERNAME }}
-#          key: ${{ secrets.EC2_PRIVATE_KEY }}
-#          script_stop: true
-#          script: |
-#            rm -rf /home/ubuntu/LeadingBooks/current
-#            mkdir /home/ubuntu/LeadingBooks/current
-#            mv /home/ubuntu/LeadingBooks/tobe/project.jar /home/ubuntu/LeadingBooks/current/project.jar
-#            cd /home/ubuntu/LeadingBooks/current
-#            sudo fuser -k -n tcp 8080 || true
-#            nohup java -jar project.jar > ./output.log 2>&1 &
-#            rm -rf /home/ubuntu/LeadingBooks/tobe
-#
