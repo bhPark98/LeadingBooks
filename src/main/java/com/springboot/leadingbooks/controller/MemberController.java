@@ -3,21 +3,22 @@ package com.springboot.leadingbooks.controller;
 import com.springboot.leadingbooks.controller.dto.request.ChangeNicknameRequestDto;
 import com.springboot.leadingbooks.controller.dto.request.DeleteUserRequestDto;
 import com.springboot.leadingbooks.controller.dto.request.MemberRequestDto;
-import com.springboot.leadingbooks.controller.dto.response.JwtTokenResponseDto;
+import com.springboot.leadingbooks.services.dto.response.TokenInfoDto;
 import com.springboot.leadingbooks.controller.validators.SignUpValidator;
 import com.springboot.leadingbooks.domain.entity.Member;
 import com.springboot.leadingbooks.services.MemberService;
 import com.springboot.leadingbooks.controller.dto.request.LoginRequestDto;
 import com.springboot.leadingbooks.services.dto.request.FindPwdRequestDto;
 import com.springboot.leadingbooks.services.dto.response.MyPageResponseDto;
-import jakarta.servlet.http.Cookie;
+import com.springboot.leadingbooks.util.CookieUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.http.HttpRequest;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -27,8 +28,6 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.Errors;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-
-import java.net.http.HttpResponse;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -36,6 +35,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 @Log4j2
 public class MemberController {
+    private final CookieUtil cookieUtil;
     private final MemberService memberService;
     private final SignUpValidator signUpValidator;
 
@@ -76,7 +76,7 @@ public class MemberController {
     // 로그인
     @PostMapping("/sign/in")
     @ResponseBody
-    public ResponseEntity<?> login(Model model, @Validated @ModelAttribute("loginRequestDto") LoginRequestDto loginRequestDto, BindingResult result, HttpServletResponse response) {
+    public ResponseEntity<?> login(@Validated @ModelAttribute("loginRequestDto") LoginRequestDto loginRequestDto, BindingResult result, HttpServletResponse response) {
         log.info("Received login request: {}", loginRequestDto);
 
         if(result.hasErrors()) {
@@ -87,28 +87,30 @@ public class MemberController {
             return ResponseEntity.badRequest().body(errorMap); // 400 Bad Request와 함께 오류 메시지 반환
         }
 
-        String token = memberService.login(loginRequestDto);
-        log.info("token = {}", token);
+        TokenInfoDto dto = memberService.login(loginRequestDto);
 
-        Cookie accessTokenCookie = new Cookie("access_token", token);
-        accessTokenCookie.setMaxAge(60 * 60 * 24);
-        accessTokenCookie.setHttpOnly(true);
-        accessTokenCookie.setPath("/");
-        response.addCookie(accessTokenCookie);
+        log.info("dto = {}", dto);
 
-        return ResponseEntity.ok(HttpStatus.OK);
+        ResponseCookie accessCookie = cookieUtil.createAccessCookie(dto.getAccessToken());
+        ResponseCookie refreshCookie = cookieUtil.createRefreshCookie(dto.getRefreshToken());
+
+        return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE, accessCookie.toString())
+                .header(HttpHeaders.SET_COOKIE, refreshCookie.toString())
+                .body(HttpStatus.OK);
     }
 
     // 로그아웃
-    @GetMapping("/logout")
-    public String logout(HttpServletResponse response) {
+    @PostMapping("/logout/{mId}")
+    public ResponseEntity<?> logout(@PathVariable("mId") Long mId) {
+        memberService.logout(mId);
+        ResponseCookie accessCookie = cookieUtil.deleteAccessCookie();
+        ResponseCookie refreshCookie = cookieUtil.deleteRefreshCookie();
+        log.info("accessCookie = {}", accessCookie);
+        log.info("refreshCookie = {}", refreshCookie);
 
-        Cookie cookie = new Cookie("access_token", null);
-        cookie.setPath("/");
-        cookie.setMaxAge(0);
-        response.addCookie(cookie);
+        return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE, accessCookie.toString())
+                .header(HttpHeaders.SET_COOKIE, refreshCookie.toString()).body(HttpStatus.OK);
 
-        return "redirect:/sign/in";
     }
 
     // 회원탈퇴 페이지
@@ -121,15 +123,16 @@ public class MemberController {
 
     // 회원탈퇴
     @PostMapping("/delete/user")
-    public ResponseEntity<?> deleteUser(@RequestHeader("X-HTTP-Method-Override") String httpMethodOverride, @RequestBody DeleteUserRequestDto dto, HttpServletResponse response) {
+    public ResponseEntity<?> deleteUser(@RequestHeader("X-HTTP-Method-Override") String httpMethodOverride, @RequestBody DeleteUserRequestDto dto, HttpServletRequest request) {
         log.info("Received deleteInfo request: {}", dto);
         if("DELETE".equals(httpMethodOverride)) {
-            memberService.deleteMember(dto);
-            Cookie cookie = new Cookie("access_token", null);
-            cookie.setPath("/");
-            cookie.setMaxAge(0);
-            response.addCookie(cookie);
-            return ResponseEntity.ok(HttpStatus.OK);
+            memberService.deleteMember(dto, request);
+
+            ResponseCookie accessCookie = cookieUtil.deleteAccessCookie();
+            ResponseCookie refreshCookie = cookieUtil.deleteRefreshCookie();
+
+            return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE, accessCookie.toString())
+                    .header(HttpHeaders.SET_COOKIE, refreshCookie.toString()).body(HttpStatus.OK);
         } else {
             return ResponseEntity.badRequest().build();
         }
@@ -138,11 +141,11 @@ public class MemberController {
 
     // 내정보 확인
     @GetMapping("/myPage/{mId}")
-    public String getMyPage(@PathVariable String mId, Model model) {
-         MyPageResponseDto myPageResponseDto = memberService.getBorrowedBooks(Long.parseLong(mId));
-         log.info("myPageResponseDto = {}", myPageResponseDto);
-         model.addAttribute("myPageResponseDto", myPageResponseDto);
-         model.addAttribute("mId", mId);
+    public String myPage(@PathVariable("mId") String mId, Model model) {
+            MyPageResponseDto myPageResponseDto = memberService.getBorrowedBooks(Long.parseLong(mId));
+            log.info("myPageResponseDto = {}", myPageResponseDto);
+            model.addAttribute("myPageResponseDto", myPageResponseDto);
+
 
          return "members/myPage";
     }
@@ -156,7 +159,7 @@ public class MemberController {
     }
 
     // 이메일 전송
-    @PostMapping("emails/verification-requests")
+    @PostMapping("/emails/verification-requests")
     public ResponseEntity<?> sendMessage(@RequestParam("email") @Valid String email) {
         log.info("email = {}", email);
         memberService.sendCodeToEmail(email);
@@ -202,13 +205,17 @@ public class MemberController {
     // 회원 정보 가져오기
     @GetMapping("/userInfo")
     @ResponseBody
-    public Long getUserInfo(@AuthenticationPrincipal UserDetails userDetails) {
+    public ResponseEntity<?> getUserInfo(@AuthenticationPrincipal UserDetails userDetails) {
         // userDetails 객체를 사용해서 현재 인증된 사용자 정보를 가져옴
         String username = userDetails.getUsername();
         // UserService를 통해 사용자 정보를 가져옴
         Member member = memberService.getMemberByUsername(username);
 
         log.info("Retrieved member = {}", member);
-        return member.getId();
+
+        Map<String, String> response = new HashMap<>();
+        response.put("mId", member.getId().toString());
+
+        return ResponseEntity.ok(response);
     }
 }

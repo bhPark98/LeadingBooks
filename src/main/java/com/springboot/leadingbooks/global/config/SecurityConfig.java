@@ -1,14 +1,13 @@
 package com.springboot.leadingbooks.global.config;
 
 import com.springboot.leadingbooks.services.CustomUserDetailsService;
-import com.springboot.leadingbooks.services.CustomUserDetailsServiceImpl;
+import com.springboot.leadingbooks.util.CookieUtil;
 import com.springboot.leadingbooks.util.token.JwtAuthFilter;
 import com.springboot.leadingbooks.util.token.JwtUtil;
 import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.Customizer;
-import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -22,12 +21,23 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableMethodSecurity(securedEnabled = true, prePostEnabled = true)
 @AllArgsConstructor
 public class SecurityConfig {
+    private final CookieUtil cookieUtil;
     private final CustomUserDetailsService customUserDetailsService;
     private final JwtUtil jwtUtil;
 
     private static final String[] AUTH_WHITELIST = {
-            "/api/v1/sign/up",
-            "/api/v1/sign/in"
+            "/sign/up",
+            "/sign/in",
+            "/reset/pwd",
+            "/find/pwd",
+            "/all/books",
+            "/post/books",
+            "/emails/verification-requests", // 인증 요청 허용
+            "/emails/verifications",          // 인증 확인 허용
+            "/book/**",
+            "/bootstrap/**",
+            "/images/**",
+            "/members/**"
     };
 
     @Bean
@@ -45,13 +55,14 @@ public class SecurityConfig {
         http.httpBasic(AbstractHttpConfigurer::disable);
 
         // JwtAuthFilter를 UsernamePasswordAuthenticationFilter 앞에 추가
-        http.addFilterBefore(new JwtAuthFilter(customUserDetailsService, jwtUtil), UsernamePasswordAuthenticationFilter.class);
+        http.addFilterBefore(new JwtAuthFilter(cookieUtil, customUserDetailsService, jwtUtil), UsernamePasswordAuthenticationFilter.class);
 
         // 권한 규칙 작성
         http.authorizeHttpRequests(authorize -> authorize
                 .requestMatchers(AUTH_WHITELIST).permitAll()
+                .anyRequest().authenticated());
 
-                .anyRequest().permitAll());
+        http.logout(AbstractHttpConfigurer::disable);   // Security 로그아웃 기본설정 해제
 
         return http.build();
     }

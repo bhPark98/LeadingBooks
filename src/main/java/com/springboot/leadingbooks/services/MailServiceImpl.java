@@ -2,16 +2,16 @@ package com.springboot.leadingbooks.services;
 
 import com.springboot.leadingbooks.global.response.error.CustomException;
 import com.springboot.leadingbooks.global.response.error.ErrorCode;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Slf4j
 @Service
-@Transactional
+@Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class MailServiceImpl implements MailService {
 

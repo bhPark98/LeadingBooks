@@ -9,12 +9,14 @@ import lombok.Data;
 @Data
 @AllArgsConstructor
 public class ReviewResponseDto {
+    private Long rId;
     private String mNickname;
     private int rRating;
     private String rContent;
 
     public static ReviewResponseDto of(Review review) {
         return ReviewResponseDto.builder()
+                .rId(review.getId())
                 .mNickname(review.getMember().getMNickname())
                 .rRating(review.getRRating())
                 .rContent(review.getRContent())

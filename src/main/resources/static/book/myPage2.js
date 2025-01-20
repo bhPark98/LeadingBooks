@@ -34,11 +34,13 @@ document.getElementById("extendBookBtn").addEventListener("click", function () {
 
             if (successfulRequests.length > 0) {
                 alert("도서 대여 연장 성공!");
+                location.reload();
             }
 
             if (failedRequests.length > 0) {
                 const errorMessages = new Set(failedRequests.map(result => result.reason.message));
                 alert(`도서 연장 실패: ${[...errorMessages].join("\n")}`);
+                location.reload();
             }
         })
         .catch(error => {
@@ -80,6 +82,7 @@ document.getElementById("returnBookBtn").addEventListener("click", function () {
 
             if (successfulRequests.length > 0) {
                 alert("도서 반납 성공!");
+                location.reload();
             }
 
             if (failedRequests.length > 0) {
@@ -130,6 +133,7 @@ document.getElementById("changeNicknameBtn").addEventListener("click", function 
                 } else {
                     return response.json().then(data => {
                         alert(`닉네임 변경 실패: ${data.message}`);
+                        location.reload();
                     });
                 }
             })
@@ -137,4 +141,25 @@ document.getElementById("changeNicknameBtn").addEventListener("click", function 
                 alert("닉네임 변경 중 오류가 발생했습니다.");
             });
     });
+});
+
+document.getElementById("logoutButton").addEventListener("click", function (event) {
+    event.preventDefault();
+
+    fetch('/logout', {
+        method: 'POST',
+        credentials: 'include',
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    })
+        .then(response => {
+            if(response.ok) {
+                window.location.href = '/sign/in';
+            } else {
+                alert(`로그아웃 실패: ${response.status}`, );
+                console.error('로그아웃 실패:', response.status);
+            }
+        })
+        .catch(error => console.error('Error:', error));
 });

@@ -70,7 +70,7 @@
                                     <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
                                     마이페이지
                                 </a>
-                                <a class="dropdown-item" href="/logout" data-toggle="modal" data-target="#logoutModal">
+                                <a class="dropdown-item" href="#" data-toggle="modal" data-target="#logoutModal">
                                     <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
                                     로그아웃
                                 </a>
@@ -84,6 +84,7 @@
 
                 <!-- Begin Page Content -->
                 <div class="container-fluid">
+                    <input type="hidden" id="detail_mId" value="">
 
                     <h1>책 세부 정보</h1>
                     <p>남은 도서: <span th:text="${bookCount}"></span> </p>
@@ -107,6 +108,7 @@
                                 <p>닉네임: <span th:text="${review.getMNickname()}"></span></p>
                                 <p>내용: <span th:text="${review.getRContent()}"></span></p>
                                 <p>별점: <span th:text="${review.getRRating()}"></span></p>
+                                <button class="deleteReviewBtn" th:data-review-id="${review.getRId()}" style="color: red;">삭제</button> <!-- 삭제 버튼 추가 -->
                             </li>
                         </ul>
                     </div>
@@ -178,7 +180,7 @@
                 <div class="modal-body">로그아웃을 원하시면 밑에 로그아웃 버튼을 눌러주세요.</div>
                 <div class="modal-footer">
                     <button class="btn btn-secondary" type="button" data-dismiss="modal">취소</button>
-                    <a class="btn btn-primary" href="/logout">로그아웃</a>
+                    <a class="btn btn-primary" id="logoutButton" href="#">로그아웃</a>
                 </div>
             </div>
         </div>
@@ -194,7 +196,7 @@
     <!-- Custom scripts for all pages-->
     <script src="/bootstrap/js/sb-admin-2.min.js"></script>
 
-    <script src="/book/blank.js"></script>
+    <script src="/book/detail.js"></script>
 </body>
 
 </html>

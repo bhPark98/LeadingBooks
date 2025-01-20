@@ -13,7 +13,7 @@ public enum ErrorCode {
     NOT_FOUND_BOOK(HttpStatus.NOT_FOUND, "NFB", "해당 책을 찾을 수 없습니다."),
     NOT_FOUND_STOPPED(HttpStatus.NOT_FOUND, "NFS", "정지회원이 존재하지 않습니다."),
     NOT_COUNT_BOOK(HttpStatus.NOT_FOUND, "NCB", "대여 가능한 도서가 존재하지 않습니다."),
-    DUPLICATED_NICKNAME(HttpStatus.IM_USED, "DN", "중복된 닉네임입니다. 다른 닉네임을 입력하여주세요."),
+    DUPLICATED_NICKNAME(HttpStatus.CONFLICT, "DN", "중복된 닉네임입니다. 다른 닉네임을 입력하여주세요."),
     NOT_FOUND_EMAIL(HttpStatus.NOT_FOUND, "NFE", "이메일이 존재하지 않습니다."),
     NOT_MATCH_PASSWORD(HttpStatus.CONFLICT, "NMP", "비밀번호가 일치하지 않습니다."),
     NOT_AUTHORIZED(HttpStatus.UNAUTHORIZED, "NA", "Not Authenticated Request"),
@@ -28,7 +28,9 @@ public enum ErrorCode {
     NOT_BORROWED_BOOK(HttpStatus.NOT_FOUND, "NBB", "대여하지 않은 도서입니다. 도서를 먼저 대여 후 연장을 해주세요."),
     CANNOT_BORROW_BOOKS(HttpStatus.UNAUTHORIZED, "CBB", "연체로 인한 정지입니다. 관리자에게 문의하세요."),
     RETURNING_BOOK(HttpStatus.NOT_EXTENDED, "RB", "연체된 도서를 반납하지 않으면 연장이 불가능합니다."),
-    NOT_FOUND_BORROWED_INFO(HttpStatus.NOT_FOUND, "NFBI", "도서 대여 정보가 존재하지 않습니다.");
+    NOT_FOUND_BORROWED_INFO(HttpStatus.NOT_FOUND, "NFBI", "도서 대여 정보가 존재하지 않습니다."),
+    NOT_FOUND_TOKEN(HttpStatus.NOT_FOUND, "NFT", "토큰 정보가 존재하지 않습니다."),
+    NOT_FOUND_REVIEW(HttpStatus.NOT_FOUND, "NFR", "리뷰 정보가 존재하지 않습니다.");
 
 
     private final HttpStatus httpStatus;

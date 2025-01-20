@@ -4,17 +4,20 @@ import com.springboot.leadingbooks.controller.dto.request.DeleteUserRequestDto;
 import com.springboot.leadingbooks.controller.dto.request.MemberRequestDto;
 import com.springboot.leadingbooks.domain.entity.CheckOut;
 import com.springboot.leadingbooks.domain.entity.Member;
+import com.springboot.leadingbooks.domain.entity.RefreshToken;
 import com.springboot.leadingbooks.domain.repository.CheckOutRepository;
 import com.springboot.leadingbooks.domain.repository.MemberRepository;
+import com.springboot.leadingbooks.domain.repository.RefreshTokenRepository;
 import com.springboot.leadingbooks.global.response.error.CustomException;
 import com.springboot.leadingbooks.global.response.error.ErrorCode;
 import com.springboot.leadingbooks.services.dto.request.CustomUserInfoDto;
 import com.springboot.leadingbooks.controller.dto.request.LoginRequestDto;
 import com.springboot.leadingbooks.services.dto.request.FindPwdRequestDto;
 import com.springboot.leadingbooks.services.dto.response.BorrowedBookInfoDto;
+import com.springboot.leadingbooks.services.dto.response.TokenInfoDto;
 import com.springboot.leadingbooks.services.dto.response.MyPageResponseDto;
 import com.springboot.leadingbooks.util.token.JwtUtil;
-import jakarta.transaction.Transactional;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
@@ -22,6 +25,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.util.List;
@@ -31,7 +35,7 @@ import java.util.Random;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-@Transactional
+@Transactional(readOnly = true)
 public class MemberServiceImpl implements MemberService {
     private final ModelMapper modelMapper;
     private final JwtUtil jwtUtil;
@@ -41,11 +45,14 @@ public class MemberServiceImpl implements MemberService {
     private final BCryptPasswordEncoder passwordEncoder;
     private final PasswordEncoder encoder;
     private static String authCode = "";
+    private final RefreshTokenRepository refreshTokenRepository;
+
 
     @Value("${spring.mail.auth-code-expiration-millis}")
     private Long authCodeExpirationMillis;
 
     // 회원가입
+    @Transactional
     public void join(MemberRequestDto dto) {
         log.info("회원가입 시도 - 이메일: {}", dto.getEmail());
         Optional<Member> valiMember = memberRepository.findMemberByEmail(dto.getEmail());
@@ -79,7 +86,7 @@ public class MemberServiceImpl implements MemberService {
 
     // 로그인
     @Transactional
-    public String login(LoginRequestDto dto) {
+    public TokenInfoDto login(LoginRequestDto dto) {
         String email = dto.getEmail();
         String password = dto.getPassword();
         Member member = memberRepository.findMemberByEmail(email).orElseThrow(
@@ -93,12 +100,34 @@ public class MemberServiceImpl implements MemberService {
 
         CustomUserInfoDto info = modelMapper.map(member, CustomUserInfoDto.class);
 
+        // 액세스 토큰 생성
         String accessToken = jwtUtil.createAccessToken(info);
-        return accessToken;
+        // 리프레시 토큰 저장
+        String refreshToken = jwtUtil.createRefreshToken(info, accessToken);
+
+        return TokenInfoDto.builder()
+                .accessToken(accessToken)
+                .refreshToken(refreshToken)
+                .build();
+    }
+
+    // 로그아웃
+    @Transactional
+    public void logout(Long mId) {
+        Member member = memberRepository.findById(mId).orElseThrow(
+                () -> new CustomException(ErrorCode.NOT_FOUND_MEMBER)
+        );
+        RefreshToken token = refreshTokenRepository.findById(member.getId()).orElseThrow(
+                () -> new CustomException(ErrorCode.NOT_FOUND_TOKEN)
+        );
+
+        log.info("token = {}", token);
+        refreshTokenRepository.delete(token);
     }
 
     // 회원 탈퇴
-    public void deleteMember(DeleteUserRequestDto dto) {
+    @Transactional
+    public void deleteMember(DeleteUserRequestDto dto, HttpServletRequest request) {
         String email = dto.getEmail();
         String pwd = dto.getPwd();
         String rePwd = dto.getRePwd();
@@ -106,12 +135,22 @@ public class MemberServiceImpl implements MemberService {
                 () -> new CustomException(ErrorCode.NOT_FOUND_MEMBER)
         );
 
+        RefreshToken token = refreshTokenRepository.findById(member.getId()).orElseThrow(
+                () -> new CustomException(ErrorCode.NOT_FOUND_TOKEN)
+        );
+
+        log.info("token = {}", token);
+        refreshTokenRepository.delete(token);
+
+
         if(pwd.equals(rePwd) && passwordEncoder.matches(pwd, member.getPassword())) {
             memberRepository.delete(member);
         }
         else {
             throw new CustomException(ErrorCode.NOT_MATCHES_PASSWORD);
         }
+
+
     }
 
     // 마이페이지 조회
@@ -143,20 +182,23 @@ public class MemberServiceImpl implements MemberService {
     }
 
     // 닉네임 변경
+    @Transactional
     public void changeNickname(Long mId, String mNickname) {
         Member member = memberRepository.findById(mId).orElseThrow(
                 () -> new CustomException(ErrorCode.NOT_FOUND_MEMBER)
         );
 
         boolean isNicknameNotExist = memberRepository.isNotExistsNickname(mNickname);
+        log.info("isNicknameNotExist = {}", isNicknameNotExist);
         if(isNicknameNotExist) {
             member.changeNickname(mNickname);
             memberRepository.save(member);
         }
-        else
+        else {
             throw new CustomException(ErrorCode.DUPLICATED_NICKNAME);
-
+        }
     }
+
     // 이메일 인증번호 요청
     public void sendCodeToEmail(String toEmail) {
         this.checkDuplicatedEmail(toEmail);
@@ -168,7 +210,7 @@ public class MemberServiceImpl implements MemberService {
     // 비밀번호 찾기 링크 요청
     public void sendPwdLinkToEmail(String toEmail) {
         String title = "leadingbooks 비밀번호 찾기 링크";
-        String link = "localhost:8080/api/v1/find/pwd";
+        String link = "localhost:8080/find/pwd";
         mailService.sendEmail(toEmail, title, link);
     }
 
@@ -203,6 +245,7 @@ public class MemberServiceImpl implements MemberService {
             throw new CustomException(ErrorCode.NOT_MATCHES_AUTHCODE);
         }
     }
+
     // 토큰으로 유저정보 반환
     public Member getMemberByUsername(String username) {
         Long mId = Long.parseLong(username);

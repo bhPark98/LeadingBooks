@@ -8,5 +8,8 @@ public interface ReviewService {
     BookReviewResponseDto getBookDetail(Long bId);
 
     // 도서 리뷰 작성 로직
-    BookReviewResponseDto WriteReview(ReviewCreateRequestDto reviewCreateRequestDto);
+    void WriteReview(ReviewCreateRequestDto reviewCreateRequestDto);
+
+    // 도서 리뷰 삭제 로직
+    public void removeReview(Long rId);
 }

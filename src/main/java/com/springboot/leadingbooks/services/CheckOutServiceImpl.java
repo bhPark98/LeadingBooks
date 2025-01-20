@@ -11,14 +11,15 @@ import com.springboot.leadingbooks.domain.repository.MemberRepository;
 import com.springboot.leadingbooks.domain.repository.StoppedRepository;
 import com.springboot.leadingbooks.global.response.error.CustomException;
 import com.springboot.leadingbooks.global.response.error.ErrorCode;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class CheckOutServiceImpl implements CheckOutService {
     private final BookRepository bookRepository;
     private final CheckOutRepository checkOutRepository;

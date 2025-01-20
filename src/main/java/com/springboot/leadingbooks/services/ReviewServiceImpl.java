@@ -11,13 +11,14 @@ import com.springboot.leadingbooks.services.dto.response.BookReviewResponseDto;
 import com.springboot.leadingbooks.global.response.error.CustomException;
 import com.springboot.leadingbooks.global.response.error.ErrorCode;
 import jakarta.persistence.EntityManager;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class ReviewServiceImpl implements ReviewService {
     private final ReviewRepository reviewRepository;
     private final BookRepository bookRepository;
@@ -26,7 +27,6 @@ public class ReviewServiceImpl implements ReviewService {
 
     // 도서 조회 로직
     @Override
-    @Transactional
     public BookReviewResponseDto getBookDetail(Long bId) {
         Book book = bookRepository.findBookById(bId).orElseThrow(
                 () -> new CustomException(ErrorCode.NOT_FOUND_BOOK)
@@ -37,7 +37,7 @@ public class ReviewServiceImpl implements ReviewService {
     // 도서 리뷰 작성 로직
     @Override
     @Transactional
-    public BookReviewResponseDto WriteReview(ReviewCreateRequestDto reviewCreateRequestDto) {
+    public void WriteReview(ReviewCreateRequestDto reviewCreateRequestDto) {
         Book book = bookRepository.findBookById(reviewCreateRequestDto.getBId()).orElseThrow(
                 () -> new CustomException(ErrorCode.NOT_FOUND_BOOK)
         );
@@ -55,6 +55,15 @@ public class ReviewServiceImpl implements ReviewService {
         reviewRepository.save(review);
         entityManager.flush();
 
-        return BookReviewResponseDto.of(book);
+    }
+
+    // 도서 리뷰 삭제 로직
+    @Transactional
+    public void removeReview(Long rId) {
+        Review review = reviewRepository.findById(rId).orElseThrow(
+                () -> new CustomException(ErrorCode.NOT_FOUND_REVIEW)
+        );
+
+        reviewRepository.delete(review);
     }
 }
